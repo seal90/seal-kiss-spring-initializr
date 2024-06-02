@@ -45,6 +45,7 @@ export default function Application() {
   const [generating, setGenerating] = useState(false)
 
   const buttonExplore = useRef(null)
+  const buttonExploreMulti = useRef(null)
   const buttonDependency = useRef(null)
   const buttonSubmit = useRef(null)
 
@@ -93,6 +94,19 @@ export default function Application() {
     })
     setBlob(project)
   }
+
+    const onExploreMulti = async () => {
+      const url = `${windowsUtils.origin}/multi_starter.zip`
+      dispatch({ type: 'UPDATE', payload: { explore: true, list: false } })
+      const project = await getProject(
+        url,
+        values,
+        get(dependencies, 'list')
+      ).catch(() => {
+        toast.error(`Could not connect to server. Please check your network.`)
+      })
+      setBlob(project)
+    }
 
   const onShare = () => {
     dispatch({ type: 'UPDATE', payload: { share: true } })
@@ -143,7 +157,9 @@ export default function Application() {
                 onSubmit={onSubmit}
                 onShare={onShare}
                 onExplore={onExplore}
+                onExploreMulti={onExploreMulti}
                 refExplore={buttonExplore}
+                refExploreMulti={buttonExploreMulti}
                 refSubmit={buttonSubmit}
                 refDependency={buttonDependency}
                 generating={generating}

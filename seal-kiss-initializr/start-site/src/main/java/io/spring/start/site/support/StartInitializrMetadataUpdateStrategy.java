@@ -16,15 +16,24 @@
 
 package io.spring.start.site.support;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import io.spring.initializr.generator.version.Version;
+import io.spring.initializr.generator.version.VersionParser;
 import io.spring.initializr.metadata.DefaultMetadataElement;
 import io.spring.initializr.web.support.InitializrMetadataUpdateStrategy;
 import io.spring.initializr.web.support.SpringIoInitializrMetadataUpdateStrategy;
 
+import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -35,20 +44,119 @@ import org.springframework.web.client.RestTemplate;
  */
 public class StartInitializrMetadataUpdateStrategy extends SpringIoInitializrMetadataUpdateStrategy {
 
+	private static final Comparator<DefaultMetadataElement> VERSION_METADATA_ELEMENT_COMPARATOR = new VersionMetadataElementComparator();
+
+	private final ObjectMapper objectMapper;
+
 	public StartInitializrMetadataUpdateStrategy(RestTemplate restTemplate, ObjectMapper objectMapper) {
 		super(restTemplate, objectMapper);
+		this.objectMapper = objectMapper;
 	}
 
 	@Override
 	protected List<DefaultMetadataElement> fetchSpringBootVersions(String url) {
-		List<DefaultMetadataElement> versions = super.fetchSpringBootVersions(url);
+		InputStream metadataStream = this.getClass().getClassLoader().getResourceAsStream("project_metadata.json");
+		JsonNode content = null;
+		try {
+			content = this.objectMapper.readTree(new String(IOUtils.toByteArray(metadataStream)));
+		}
+		catch (IOException ex) {
+			ex.printStackTrace();
+		}
+		List<DefaultMetadataElement> versions = getBootVersions(content);
+
+		// List<DefaultMetadataElement> versions = super.fetchSpringBootVersions(url);
 		return (versions != null) ? versions.stream().filter(this::isCompatibleVersion).collect(Collectors.toList())
 				: null;
+	}
+
+	List<DefaultMetadataElement> getBootVersions(JsonNode content) {
+		ArrayNode releases = (ArrayNode) content.get("_embedded").get("releases");
+		List<DefaultMetadataElement> list = new ArrayList();
+		Iterator var3 = releases.iterator();
+
+		while (var3.hasNext()) {
+			JsonNode node = (JsonNode) var3.next();
+			DefaultMetadataElement versionMetadata = parseVersionMetadata(node);
+			if (versionMetadata != null) {
+				list.add(versionMetadata);
+			}
+		}
+
+		list.sort(VERSION_METADATA_ELEMENT_COMPARATOR.reversed());
+		return list;
+	}
+
+	private DefaultMetadataElement parseVersionMetadata(JsonNode node) {
+		String versionId = node.get("version").textValue();
+		Version version = VersionParser.DEFAULT.safeParse(versionId);
+		if (version == null) {
+			return null;
+		}
+		else {
+			DefaultMetadataElement versionMetadata = new DefaultMetadataElement();
+			versionMetadata.setId(versionId);
+			versionMetadata.setName(determineDisplayName(version));
+			versionMetadata.setDefault(node.get("current").booleanValue());
+			return versionMetadata;
+		}
+	}
+
+	private String determineDisplayName(Version version) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(version.getMajor()).append(".").append(version.getMinor()).append(".").append(version.getPatch());
+		if (version.getQualifier() != null) {
+			sb.append(this.determineSuffix(version.getQualifier()));
+		}
+
+		return sb.toString();
+	}
+
+	private String determineSuffix(Version.Qualifier qualifier) {
+		String id = qualifier.getId();
+		if (id.equals("RELEASE")) {
+			return "";
+		}
+		else {
+			StringBuilder sb = new StringBuilder(" (");
+			if (id.contains("SNAPSHOT")) {
+				sb.append("SNAPSHOT");
+			}
+			else {
+				sb.append(id);
+				if (qualifier.getVersion() != null) {
+					sb.append(qualifier.getVersion());
+				}
+			}
+
+			sb.append(")");
+			return sb.toString();
+		}
 	}
 
 	private boolean isCompatibleVersion(DefaultMetadataElement versionMetadata) {
 		Version version = Version.parse(versionMetadata.getId());
 		return (version.getMajor() >= 3 && version.getMinor() >= 1);
+	}
+
+	private static final class VersionMetadataElementComparator implements Comparator<DefaultMetadataElement> {
+
+		private static final VersionParser versionParser;
+
+		private VersionMetadataElementComparator() {
+		}
+
+		@Override
+		public int compare(DefaultMetadataElement o1, DefaultMetadataElement o2) {
+			Version o1Version = versionParser.parse(o1.getId());
+			Version o2Version = versionParser.parse(o2.getId());
+			return o1Version.compareTo(o2Version);
+		}
+
+		static {
+			versionParser = VersionParser.DEFAULT;
+		}
+
 	}
 
 }

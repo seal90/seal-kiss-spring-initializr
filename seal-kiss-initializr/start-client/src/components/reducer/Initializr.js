@@ -63,7 +63,7 @@ export function reducer(state, action) {
         set(
           meta,
           'packageName',
-          `${get(meta, 'group')}.${get(meta, 'artifact')}`
+          `${get(meta, 'group')}.${get(meta, 'artifact').replaceAll('-','.')}`
         )
         set(meta, 'name', `${get(meta, 'artifact')}`)
       }

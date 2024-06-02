@@ -1,3 +1,7 @@
+seal:
+  seal-kiss-parent:
+    version: 2.0.2-SNAPSHOT
+
 logging:
   level:
     org.springframework.core.env: warn
@@ -36,6 +40,13 @@ spring:
         use-last-modified: false
 
 initializr:
+  groupId:
+    value: com.github.seal90
+  artifactId:
+    value: CHANGEME
+  name:
+    value: CHANGEME
+
   stats:
     elastic:
       uri: ${elastic-uri:}
@@ -173,22 +184,22 @@ initializr:
   dependencies:
     - name: Developer Tools
       content:
-        - name: GraalVM Native Support
-          id: native
-          groupId: org.springframework.boot
-          artifactId: spring-boot
-          description: Support for compiling Spring applications to native executables using the GraalVM native-image compiler.
-          starter: false
-        - name: GraphQL DGS Code Generation
-          id: dgs-codegen
-          compatibilityRange: "3.0.0-M1"
-          groupId: com.netflix.graphql.dgs.codegen
-          artifactId: graphql-dgs-codegen-gradle
-          mappings:
-            - compatibilityRange: "3.0.0-M1"
-              version: 6.0.3
-          description: Generate data types and type-safe APIs for querying GraphQL APIs by parsing schema files.
-          starter: false
+#        - name: GraalVM Native Support
+#          id: native
+#          groupId: org.springframework.boot
+#          artifactId: spring-boot
+#          description: Support for compiling Spring applications to native executables using the GraalVM native-image compiler.
+#          starter: false
+#        - name: GraphQL DGS Code Generation
+#          id: dgs-codegen
+#          compatibilityRange: "3.0.0-M1"
+#          groupId: com.netflix.graphql.dgs.codegen
+#          artifactId: graphql-dgs-codegen-gradle
+#          mappings:
+#            - compatibilityRange: "3.0.0-M1"
+#              version: 6.0.3
+#          description: Generate data types and type-safe APIs for querying GraphQL APIs by parsing schema files.
+#          starter: false
         - name: Spring Boot DevTools
           id: devtools
           groupId: org.springframework.boot
@@ -216,27 +227,27 @@ initializr:
           links:
             - rel: reference
               href: https://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/index.html#appendix.configuration-metadata.annotation-processor
-        - name: Docker Compose Support
-          id: docker-compose
-          compatibilityRange: "3.1.0-M1"
-          groupId: org.springframework.boot
-          artifactId: spring-boot-docker-compose
-          scope: runtime
-          description: Provides docker compose support for enhanced development experience.
-          starter: false
-          links:
-            - rel: reference
-              href: https://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/index.html#features.docker-compose
-        - name: Spring Modulith
-          id: modulith
-          bom: spring-modulith
-          compatibility-range: "3.1.0"
-          group-id: org.springframework.modulith
-          artifact-id: spring-modulith-starter-core
-          description: Support for building modular monolithic applications.
-          links:
-            - rel: reference
-              href: https://docs.spring.io/spring-modulith/reference/
+#        - name: Docker Compose Support
+#          id: docker-compose
+#          compatibilityRange: "3.1.0-M1"
+#          groupId: org.springframework.boot
+#          artifactId: spring-boot-docker-compose
+#          scope: runtime
+#          description: Provides docker compose support for enhanced development experience.
+#          starter: false
+#          links:
+#            - rel: reference
+#              href: https://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/index.html#features.docker-compose
+#        - name: Spring Modulith
+#          id: modulith
+#          bom: spring-modulith
+#          compatibility-range: "3.1.0"
+#          group-id: org.springframework.modulith
+#          artifact-id: spring-modulith-starter-core
+#          description: Support for building modular monolithic applications.
+#          links:
+#            - rel: reference
+#              href: https://docs.spring.io/spring-modulith/reference/
     - name: Web
       content:
         - name: Spring Web
@@ -269,17 +280,17 @@ initializr:
               description: Building a Reactive RESTful Web Service
             - rel: reference
               href: https://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/index.html#web.reactive
-        - name: Spring for GraphQL
-          id: graphql
-          description: Build GraphQL applications with Spring for GraphQL and GraphQL Java.
-          facets:
-            - json
-          links:
-            - rel: guide
-              href: https://spring.io/guides/gs/graphql-server/
-              description: Building a GraphQL service
-            - rel: reference
-              href: https://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/index.html#web.graphql
+#        - name: Spring for GraphQL
+#          id: graphql
+#          description: Build GraphQL applications with Spring for GraphQL and GraphQL Java.
+#          facets:
+#            - json
+#          links:
+#            - rel: guide
+#              href: https://spring.io/guides/gs/graphql-server/
+#              description: Building a GraphQL service
+#            - rel: reference
+#              href: https://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/index.html#web.graphql
         - name: Rest Repositories
           id: data-rest
           facets:
@@ -297,110 +308,110 @@ initializr:
               description: Accessing MongoDB Data with REST
             - rel: reference
               href: https://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/index.html#howto.data-access.exposing-spring-data-repositories-as-rest
-        - name: Spring Session
-          id: session
-          groupId: org.springframework.session
-          artifactId: spring-session-core
-          description: Provides an API and implementations for managing user session information.
-          starter: false
-          links:
-            - rel: reference
-              href: https://docs.spring.io/spring-session/reference/
-        - name: Rest Repositories HAL Explorer
-          id: data-rest-explorer
-          description: Browsing Spring Data REST repositories in your browser.
-          starter: false
-          groupId: org.springframework.data
-          artifactId: spring-data-rest-hal-explorer
-        - name: Spring HATEOAS
-          id: hateoas
-          description: Eases the creation of RESTful APIs that follow the HATEOAS principle when working with Spring / Spring MVC.
-          links:
-            - rel: guide
-              href: https://spring.io/guides/gs/rest-hateoas/
-              description: Building a Hypermedia-Driven RESTful Web Service
-            - rel: reference
-              href: https://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/index.html#web.spring-hateoas
-        - name: Spring Web Services
-          id: web-services
-          description: Facilitates contract-first SOAP development. Allows for the creation of flexible web services using one of the many ways to manipulate XML payloads.
-          aliases:
-            - ws
-          links:
-            - rel: guide
-              href: https://spring.io/guides/gs/producing-web-service/
-              description: Producing a SOAP web service
-            - rel: reference
-              href: https://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/index.html#io.webservices
-        - name: Jersey
-          id: jersey
-          description: Framework for developing RESTful Web Services in Java that provides support for JAX-RS APIs.
-          facets:
-            - json
-          links:
-            - rel: reference
-              href: https://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/index.html#web.servlet.jersey
-        - name: Vaadin
-          id: vaadin
-          facets:
-            - web
-          groupId: com.vaadin
-          artifactId: vaadin-spring-boot-starter
-          description: A web framework that allows you to write UI in pure Java without getting bogged down in JS, HTML, and CSS.
-          bom: vaadin
-          compatibilityRange: "[3.0.0,3.3.0-M1)"
-          links:
-            - rel: guide
-              href: https://spring.io/guides/gs/crud-with-vaadin/
-              description: Creating CRUD UI with Vaadin
-            - rel: reference
-              href: https://vaadin.com/docs
-        - name: Hilla
-          id: hilla
-          bom: hilla
-          compatibilityRange: "[3.1.0-M1,3.3.0-M1)"
-          facets:
-            - web
-          groupId: dev.hilla
-          artifactId: hilla-react-spring-boot-starter
-          description: An open source framework that integrates a Spring Boot Java backend with a reactive TypeScript frontend.
-          links:
-            - rel: guide
-              href: https://hilla.dev/docs/react/start/quick/#coming-from-spring-initializr
-              description: Next Steps with Hilla
-            - rel: reference
-              href: https://hilla.dev/
-    - name: Template Engines
-      content:
-        - name: Thymeleaf
-          id: thymeleaf
-          description: A modern server-side Java template engine for both web and standalone environments. Allows HTML to be correctly displayed in browsers and as static prototypes.
-          links:
-            - rel: guide
-              href: https://spring.io/guides/gs/handling-form-submission/
-              description: Handling Form Submission
-            - rel: reference
-              href: https://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/index.html#web.servlet.spring-mvc.template-engines
-        - name: Apache Freemarker
-          id: freemarker
-          description: Java library to generate text output (HTML web pages, e-mails, configuration files, source code, etc.) based on templates and changing data.
-          links:
-            - rel: reference
-              href: https://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/index.html#web.servlet.spring-mvc.template-engines
-        - name: Mustache
-          id: mustache
-          description: Logic-less templates for both web and standalone environments. There are no if statements, else clauses, or for loops. Instead there are only tags.
-          links:
-            - rel: reference
-              href: https://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/index.html#web.servlet.spring-mvc.template-engines
-        - name: Groovy Templates
-          id: groovy-templates
-          description: Groovy templating engine.
-          facets:
-            - web
-          links:
-            - rel: reference
-              href: https://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/index.html#web.servlet.spring-mvc.template-engines
+#        - name: Spring Session
+#          id: session
+#          groupId: org.springframework.session
+#          artifactId: spring-session-core
+#          description: Provides an API and implementations for managing user session information.
+#          starter: false
+#          links:
+#            - rel: reference
+#              href: https://docs.spring.io/spring-session/reference/
+#        - name: Rest Repositories HAL Explorer
+#          id: data-rest-explorer
+#          description: Browsing Spring Data REST repositories in your browser.
+#          starter: false
+#          groupId: org.springframework.data
+#          artifactId: spring-data-rest-hal-explorer
+#        - name: Spring HATEOAS
+#          id: hateoas
+#          description: Eases the creation of RESTful APIs that follow the HATEOAS principle when working with Spring / Spring MVC.
+#          links:
+#            - rel: guide
+#              href: https://spring.io/guides/gs/rest-hateoas/
+#              description: Building a Hypermedia-Driven RESTful Web Service
+#            - rel: reference
+#              href: https://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/index.html#web.spring-hateoas
+#        - name: Spring Web Services
+#          id: web-services
+#          description: Facilitates contract-first SOAP development. Allows for the creation of flexible web services using one of the many ways to manipulate XML payloads.
+#          aliases:
+#            - ws
+#          links:
+#            - rel: guide
+#              href: https://spring.io/guides/gs/producing-web-service/
+#              description: Producing a SOAP web service
+#            - rel: reference
+#              href: https://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/index.html#io.webservices
+#        - name: Jersey
+#          id: jersey
+#          description: Framework for developing RESTful Web Services in Java that provides support for JAX-RS APIs.
+#          facets:
+#            - json
+#          links:
+#            - rel: reference
+#              href: https://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/index.html#web.servlet.jersey
+#        - name: Vaadin
+#          id: vaadin
+#          facets:
+#            - web
+#          groupId: com.vaadin
+#          artifactId: vaadin-spring-boot-starter
+#          description: A web framework that allows you to write UI in pure Java without getting bogged down in JS, HTML, and CSS.
+#          bom: vaadin
+#          compatibilityRange: "[3.0.0,3.3.0-M1)"
+#          links:
+#            - rel: guide
+#              href: https://spring.io/guides/gs/crud-with-vaadin/
+#              description: Creating CRUD UI with Vaadin
+#            - rel: reference
+#              href: https://vaadin.com/docs
+#        - name: Hilla
+#          id: hilla
+#          bom: hilla
+#          compatibilityRange: "[3.1.0-M1,3.3.0-M1)"
+#          facets:
+#            - web
+#          groupId: dev.hilla
+#          artifactId: hilla-react-spring-boot-starter
+#          description: An open source framework that integrates a Spring Boot Java backend with a reactive TypeScript frontend.
+#          links:
+#            - rel: guide
+#              href: https://hilla.dev/docs/react/start/quick/#coming-from-spring-initializr
+#              description: Next Steps with Hilla
+#            - rel: reference
+#              href: https://hilla.dev/
+#    - name: Template Engines
+#      content:
+#        - name: Thymeleaf
+#          id: thymeleaf
+#          description: A modern server-side Java template engine for both web and standalone environments. Allows HTML to be correctly displayed in browsers and as static prototypes.
+#          links:
+#            - rel: guide
+#              href: https://spring.io/guides/gs/handling-form-submission/
+#              description: Handling Form Submission
+#            - rel: reference
+#              href: https://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/index.html#web.servlet.spring-mvc.template-engines
+#        - name: Apache Freemarker
+#          id: freemarker
+#          description: Java library to generate text output (HTML web pages, e-mails, configuration files, source code, etc.) based on templates and changing data.
+#          links:
+#            - rel: reference
+#              href: https://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/index.html#web.servlet.spring-mvc.template-engines
+#        - name: Mustache
+#          id: mustache
+#          description: Logic-less templates for both web and standalone environments. There are no if statements, else clauses, or for loops. Instead there are only tags.
+#          links:
+#            - rel: reference
+#              href: https://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/index.html#web.servlet.spring-mvc.template-engines
+#        - name: Groovy Templates
+#          id: groovy-templates
+#          description: Groovy templating engine.
+#          facets:
+#            - web
+#          links:
+#            - rel: reference
+#              href: https://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/index.html#web.servlet.spring-mvc.template-engines
     - name: Security
       content:
         - name: Spring Security
@@ -479,42 +490,42 @@ initializr:
               description: Managing Transactions
             - rel: reference
               href: https://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/index.html#data.sql
-        - name: Spring Data JPA
-          id: data-jpa
-          description: Persist data in SQL stores with Java Persistence API using Spring Data and Hibernate.
-          facets:
-            - jpa
-          aliases:
-            - jpa
-          links:
-            - rel: guide
-              href: https://spring.io/guides/gs/accessing-data-jpa/
-              description: Accessing Data with JPA
-            - rel: reference
-              href: https://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/index.html#data.sql.jpa-and-spring-data
-        - name: Spring Data JDBC
-          id: data-jdbc
-          description: Persist data in SQL stores with plain JDBC using Spring Data.
-          links:
-            - rel: guide
-              href: https://github.com/spring-projects/spring-data-examples/tree/master/jdbc/basics
-              description: Using Spring Data JDBC
-            - rel: reference
-              href: https://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/index.html#data.sql.jdbc
-        - name: Spring Data R2DBC
-          id: data-r2dbc
-          description: Provides Reactive Relational Database Connectivity to persist data in SQL stores using Spring Data in reactive applications.
-          facets:
-            - reactive
-          links:
-            - rel: guide
-              href: https://spring.io/guides/gs/accessing-data-r2dbc/
-              description: Accessing data with R2DBC
-            - rel: reference
-              href: https://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/index.html#data.sql.r2dbc
-            - rel: home
-              href: https://r2dbc.io
-              description: R2DBC Homepage
+#        - name: Spring Data JPA
+#          id: data-jpa
+#          description: Persist data in SQL stores with Java Persistence API using Spring Data and Hibernate.
+#          facets:
+#            - jpa
+#          aliases:
+#            - jpa
+#          links:
+#            - rel: guide
+#              href: https://spring.io/guides/gs/accessing-data-jpa/
+#              description: Accessing Data with JPA
+#            - rel: reference
+#              href: https://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/index.html#data.sql.jpa-and-spring-data
+#        - name: Spring Data JDBC
+#          id: data-jdbc
+#          description: Persist data in SQL stores with plain JDBC using Spring Data.
+#          links:
+#            - rel: guide
+#              href: https://github.com/spring-projects/spring-data-examples/tree/master/jdbc/basics
+#              description: Using Spring Data JDBC
+#            - rel: reference
+#              href: https://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/index.html#data.sql.jdbc
+#        - name: Spring Data R2DBC
+#          id: data-r2dbc
+#          description: Provides Reactive Relational Database Connectivity to persist data in SQL stores using Spring Data in reactive applications.
+#          facets:
+#            - reactive
+#          links:
+#            - rel: guide
+#              href: https://spring.io/guides/gs/accessing-data-r2dbc/
+#              description: Accessing data with R2DBC
+#            - rel: reference
+#              href: https://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/index.html#data.sql.r2dbc
+#            - rel: home
+#              href: https://r2dbc.io
+#              description: R2DBC Homepage
         - name: MyBatis Framework
           id: mybatis
           compatibilityRange: "[3.0.0,3.3.0-M1)"
@@ -554,13 +565,13 @@ initializr:
           links:
             - rel: reference
               href: https://docs.spring.io/spring-boot/docs/{bootVersion}/reference/htmlsingle/index.html#data.sql.jooq
-        - name: IBM DB2 Driver
-          id: db2
-          description: A JDBC driver that provides access to IBM DB2.
-          groupId: com.ibm.db2
-          artifactId: jcc
-          scope: runtime
-          starter: false
+#        - name: IBM DB2 Driver
+#          id: db2
+#          description: A JDBC driver that provides access to IBM DB2.
+#          groupId: com.ibm.db2
+#          artifactId: jcc
+#          scope: runtime
+#          starter: false
         - name: Apache Derby Database
           id: derby
           description: An open source relational database implemented entirely in Java.
@@ -568,20 +579,20 @@ initializr:
           artifactId: derby
           scope: runtime
           starter: false
-        - name: H2 Database
-          id: h2
-          description: Provides a fast in-memory database that supports JDBC API and R2DBC access, with a small (2mb) footprint. Supports embedded and server modes as well as a browser based console application.
-          groupId: com.h2database
-          artifactId: h2
-          scope: runtime
-          starter: false
-        - name: HyperSQL Database
-          id: hsql
-          description: Lightweight 100% Java SQL Database Engine.
-          groupId: org.hsqldb
-          artifactId: hsqldb
-          scope: runtime
-          starter: false
+#        - name: H2 Database
+#          id: h2
+#          description: Provides a fast in-memory database that supports JDBC API and R2DBC access, with a small (2mb) footprint. Supports embedded and server modes as well as a browser based console application.
+#          groupId: com.h2database
+#          artifactId: h2
+#          scope: runtime
+#          starter: false
+#        - name: HyperSQL Database
+#          id: hsql
+#          description: Lightweight 100% Java SQL Database Engine.
+#          groupId: org.hsqldb
+#          artifactId: hsqldb
+#          scope: runtime
+#          starter: false
         - name: MariaDB Driver
           id: mariadb
           description: MariaDB JDBC and R2DBC driver.
@@ -906,16 +917,16 @@ initializr:
           links:
             - rel: reference
               href: https://picocli.info/#_spring_boot_example
-        - name: Spring Shell
-          id: spring-shell
-          groupId: org.springframework.shell
-          artifactId: spring-shell-starter
-          compatibilityRange: "[3.1.0,3.4.0-M1)"
-          description: Build command line applications with spring.
-          bom: spring-shell
-          links:
-            - rel: reference
-              href: https://spring.io/projects/spring-shell
+#        - name: Spring Shell
+#          id: spring-shell
+#          groupId: org.springframework.shell
+#          artifactId: spring-shell-starter
+#          compatibilityRange: "[3.1.0,3.4.0-M1)"
+#          description: Build command line applications with spring.
+#          bom: spring-shell
+#          links:
+#            - rel: reference
+#              href: https://spring.io/projects/spring-shell
     - name: Ops
       content:
         - name: Spring Boot Actuator
@@ -1661,39 +1672,39 @@ initializr:
               href: https://github.com/TimefoldAI/timefold-quickstarts/tree/stable/technology/java-spring-boot
               description: Timetabling sample. Assign lessons to timeslots and rooms to produce a better schedule for teachers and students
   types:
-    - name: Gradle - Groovy
-      id: gradle-project
-      description: Generate a Gradle based project archive using the Groovy DSL.
-      tags:
-        build: gradle
-        dialect: groovy
-        format: project
-      default: true
-      action: /starter.zip
-    - name: Gradle - Kotlin
-      id: gradle-project-kotlin
-      description: Generate a Gradle based project archive using the Kotlin DSL.
-      tags:
-        build: gradle
-        dialect: kotlin
-        format: project
-      default: false
-      action: /starter.zip
-    - name: Gradle Config
-      id: gradle-build
-      description: Generate a Gradle build file.
-      tags:
-        build: gradle
-        format: build
-      default: false
-      action: /build.gradle
+#    - name: Gradle - Groovy
+#      id: gradle-project
+#      description: Generate a Gradle based project archive using the Groovy DSL.
+#      tags:
+#        build: gradle
+#        dialect: groovy
+#        format: project
+#      default: true
+#      action: /starter.zip
+#    - name: Gradle - Kotlin
+#      id: gradle-project-kotlin
+#      description: Generate a Gradle based project archive using the Kotlin DSL.
+#      tags:
+#        build: gradle
+#        dialect: kotlin
+#        format: project
+#      default: false
+#      action: /starter.zip
+#    - name: Gradle Config
+#      id: gradle-build
+#      description: Generate a Gradle build file.
+#      tags:
+#        build: gradle
+#        format: build
+#      default: false
+#      action: /build.gradle
     - name: Maven
       id: maven-project
       description: Generate a Maven based project archive.
       tags:
         build: maven
         format: project
-      default: false
+      default: true
       action: /starter.zip
     - name: Maven POM
       id: maven-build
@@ -1707,26 +1718,28 @@ initializr:
     - name: Jar
       id: jar
       default: true
-    - name: War
-      id: war
-      default: false
+#    - name: War
+#      id: war
+#      default: false
   javaVersions:
-    - id: 22
-      default: false
-    - id: 21
-      default: false
-    - id: 17
-      default: true
+      - id: 21
+        default: true
+#    - id: 22
+#      default: false
+#    - id: 21
+#      default: false
+#    - id: 17
+#      default: true
   languages:
     - name: Java
       id: java
       default: true
-    - name: Kotlin
-      id: kotlin
-      default: false
-    - name: Groovy
-      id: groovy
-      default: false
+#    - name: Kotlin
+#      id: kotlin
+#      default: false
+#    - name: Groovy
+#      id: groovy
+#      default: false
   bootVersions:
     - name: 3.2.0 (SNAPSHOT)
       id: 3.2.0-SNAPSHOT

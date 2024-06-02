@@ -19,21 +19,30 @@ package io.spring.start.site;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.function.Supplier;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.spring.initializr.generator.project.ProjectDirectoryFactory;
+import io.spring.initializr.generator.project.ProjectGenerationContext;
+import io.spring.initializr.metadata.InitializrMetadataProvider;
 import io.spring.initializr.versionresolver.MavenVersionResolver;
+import io.spring.initializr.web.project.ProjectRequestPlatformVersionTransformer;
 import io.spring.start.site.container.SimpleDockerServiceResolver;
 import io.spring.start.site.project.ProjectDescriptionCustomizerConfiguration;
 import io.spring.start.site.support.CacheableMavenVersionResolver;
 import io.spring.start.site.support.StartInitializrMetadataUpdateStrategy;
 import io.spring.start.site.web.HomeController;
 
+import io.spring.start.site.web.MultiGenController;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -52,6 +61,9 @@ import org.springframework.util.StringUtils;
 @EnableConfigurationProperties(StartConfigurationProperties.class)
 public class StartApplication {
 
+	@Value("${seal.seal-kiss-parent.version}")
+	private String sealParentVersion;
+
 	public static void main(String[] args) {
 		SpringApplication.run(StartApplication.class, args);
 	}
@@ -59,6 +71,15 @@ public class StartApplication {
 	@Bean
 	public HomeController homeController() {
 		return new HomeController();
+	}
+
+	@Bean
+	public MultiGenController multiGenController(InitializrMetadataProvider metadataProvider,
+												 ObjectProvider<ProjectRequestPlatformVersionTransformer> platformVersionTransformer,
+												 ApplicationContext applicationContext) {
+		return new MultiGenController(metadataProvider,
+				platformVersionTransformer,
+				applicationContext, sealParentVersion);
 	}
 
 	@Bean

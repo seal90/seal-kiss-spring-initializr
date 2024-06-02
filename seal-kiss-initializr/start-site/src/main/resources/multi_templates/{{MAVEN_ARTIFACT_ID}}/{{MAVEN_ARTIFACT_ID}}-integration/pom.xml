@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>{{MAVEN_GROUP_ID}}</groupId>
+		<artifactId>{{MAVEN_ARTIFACT_ID}}-parent</artifactId>
+		<version>${revision}</version>
+	</parent>
+	<groupId>{{MAVEN_GROUP_ID}}</groupId>
+	<artifactId>{{MAVEN_ARTIFACT_ID}}-integration</artifactId>
+	<version>${revision}</version>
+	<name>{{MAVEN_NAME}}-integration</name>
+	<description>{{MAVEN_DESCRIPTION}}</description>
+	<properties>
+
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>{{MAVEN_GROUP_ID}}</groupId>
+			<artifactId>{{MAVEN_ARTIFACT_ID}}-service</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>{{MAVEN_GROUP_ID}}</groupId>
+			<artifactId>{{MAVEN_ARTIFACT_ID}}-common</artifactId>
+		</dependency>
+
+		<!-- 这里仅做演示二方调用使用，实际不要这么用，需要删掉 -->
+		<dependency>
+			<groupId>{{MAVEN_GROUP_ID}}</groupId>
+			<artifactId>{{MAVEN_ARTIFACT_ID}}-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.github.seal90</groupId>
+			<artifactId>seal-kiss-feign-plugin</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct</artifactId>
+		</dependency>
+
+		<!-- https://mybatis.org/spring-boot-starter/mybatis-spring-boot-autoconfigure/ -->
+		<dependency>
+			<groupId>org.mybatis.spring.boot</groupId>
+			<artifactId>mybatis-spring-boot-starter</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.pagehelper</groupId>
+			<artifactId>pagehelper-spring-boot-starter</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.mybatis.spring.boot</groupId>-->
+<!--			<artifactId>mybatis-spring-boot-starter-test</artifactId>-->
+<!--			<version>3.0.3</version>-->
+<!--			<scope>test</scope>-->
+<!--		</dependency>-->
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+
+			<!-- https://mybatis.org/generator/running/runningWithMaven.html -->
+			<!-- https://mybatis.org/generator/configreference/xmlconfig.html -->
+			<plugin>
+				<groupId>org.mybatis.generator</groupId>
+				<artifactId>mybatis-generator-maven-plugin</artifactId>
+				<version>1.4.2</version>
+				<configuration>
+					<overwrite>true</overwrite>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>com.mysql</groupId>
+						<artifactId>mysql-connector-j</artifactId>
+						<version>${mysql.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>io.github.seal90</groupId>
+						<artifactId>seal-kiss-mybatis-generator-plugin</artifactId>
+						<version>${seal-kiss.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

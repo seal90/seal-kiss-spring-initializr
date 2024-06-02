@@ -1,6 +1,6 @@
 package io.github.seal90.kiss.core.utils;
 
-import io.github.seal90.kiss.client.exception.SysErrorReason;
+import io.github.seal90.kiss.base.exception.SysErrorReason;
 import io.github.seal90.kiss.core.exception.ServiceException;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;

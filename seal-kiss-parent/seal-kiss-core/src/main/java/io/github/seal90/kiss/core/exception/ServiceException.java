@@ -1,6 +1,6 @@
 package io.github.seal90.kiss.core.exception;
 
-import io.github.seal90.kiss.client.exception.ErrorReason;
+import io.github.seal90.kiss.base.exception.ErrorReason;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,6 +9,7 @@ import java.util.Map;
 
 /**
  * 业务处理异常
+ * 当业务无法继续执行，可以抛出异常中断执行
  */
 @Getter
 public class ServiceException extends RuntimeException {
@@ -24,7 +25,7 @@ public class ServiceException extends RuntimeException {
     private Map<String, String> extInfo;
 
     public ServiceException(ErrorReason errorReason){
-        super(errorReason.getErrMsg());
+        super(errorReason.getMsg());
         this.errorReason = errorReason;
 
         this.extInfo = HashMap.newHashMap(8);

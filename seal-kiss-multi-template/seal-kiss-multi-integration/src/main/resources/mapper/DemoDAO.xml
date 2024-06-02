@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.seal90.kiss.multi.integration.db.dao.DemoDAO">
+  <resultMap id="BaseResultMap" type="com.github.seal90.kiss.multi.integration.db.dos.DemoDO">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="string_attr" jdbcType="VARCHAR" property="stringAttr" />
+    <result column="integer_attr" jdbcType="INTEGER" property="integerAttr" />
+    <result column="long_attr" jdbcType="BIGINT" property="longAttr" />
+    <result column="big_decimal_attr" jdbcType="DECIMAL" property="bigDecimalAttr" />
+    <result column="local_time_attr" jdbcType="TIME" property="localTimeAttr" />
+    <result column="local_date_attr" jdbcType="DATE" property="localDateAttr" />
+    <result column="local_date_time_attr" jdbcType="TIMESTAMP" property="localDateTimeAttr" />
+    <result column="duration_attr" jdbcType="BIGINT" property="durationAttr" />
+  </resultMap>
+  <sql id="Param_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Param_Where_Clause">
+    <where>
+      <foreach collection="demoParam.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, string_attr, integer_attr, long_attr, big_decimal_attr, local_time_attr, local_date_attr, 
+    local_date_time_attr, duration_attr
+  </sql>
+  <select id="selectByParam" parameterType="com.github.seal90.kiss.multi.integration.db.dos.DemoParam" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from demo
+    <if test="_parameter != null">
+      <include refid="Param_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from demo
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from demo
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByParam" parameterType="com.github.seal90.kiss.multi.integration.db.dos.DemoParam">
+    delete from demo
+    <if test="_parameter != null">
+      <include refid="Param_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.github.seal90.kiss.multi.integration.db.dos.DemoDO">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into demo (string_attr, integer_attr, long_attr, 
+      big_decimal_attr, local_time_attr, local_date_attr, 
+      local_date_time_attr, duration_attr)
+    values (#{stringAttr,jdbcType=VARCHAR}, #{integerAttr,jdbcType=INTEGER}, #{longAttr,jdbcType=BIGINT}, 
+      #{bigDecimalAttr,jdbcType=DECIMAL}, #{localTimeAttr,jdbcType=TIME}, #{localDateAttr,jdbcType=DATE}, 
+      #{localDateTimeAttr,jdbcType=TIMESTAMP}, #{durationAttr,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.github.seal90.kiss.multi.integration.db.dos.DemoDO">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into demo
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="stringAttr != null">
+        string_attr,
+      </if>
+      <if test="integerAttr != null">
+        integer_attr,
+      </if>
+      <if test="longAttr != null">
+        long_attr,
+      </if>
+      <if test="bigDecimalAttr != null">
+        big_decimal_attr,
+      </if>
+      <if test="localTimeAttr != null">
+        local_time_attr,
+      </if>
+      <if test="localDateAttr != null">
+        local_date_attr,
+      </if>
+      <if test="localDateTimeAttr != null">
+        local_date_time_attr,
+      </if>
+      <if test="durationAttr != null">
+        duration_attr,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="stringAttr != null">
+        #{stringAttr,jdbcType=VARCHAR},
+      </if>
+      <if test="integerAttr != null">
+        #{integerAttr,jdbcType=INTEGER},
+      </if>
+      <if test="longAttr != null">
+        #{longAttr,jdbcType=BIGINT},
+      </if>
+      <if test="bigDecimalAttr != null">
+        #{bigDecimalAttr,jdbcType=DECIMAL},
+      </if>
+      <if test="localTimeAttr != null">
+        #{localTimeAttr,jdbcType=TIME},
+      </if>
+      <if test="localDateAttr != null">
+        #{localDateAttr,jdbcType=DATE},
+      </if>
+      <if test="localDateTimeAttr != null">
+        #{localDateTimeAttr,jdbcType=TIMESTAMP},
+      </if>
+      <if test="durationAttr != null">
+        #{durationAttr,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByParam" parameterType="com.github.seal90.kiss.multi.integration.db.dos.DemoParam" resultType="java.lang.Long">
+    select count(*) from demo
+    <if test="_parameter != null">
+      <include refid="Param_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByParamSelective" parameterType="map">
+    update demo
+    <set>
+      <if test="row.id != null">
+        id = #{row.id,jdbcType=BIGINT},
+      </if>
+      <if test="row.stringAttr != null">
+        string_attr = #{row.stringAttr,jdbcType=VARCHAR},
+      </if>
+      <if test="row.integerAttr != null">
+        integer_attr = #{row.integerAttr,jdbcType=INTEGER},
+      </if>
+      <if test="row.longAttr != null">
+        long_attr = #{row.longAttr,jdbcType=BIGINT},
+      </if>
+      <if test="row.bigDecimalAttr != null">
+        big_decimal_attr = #{row.bigDecimalAttr,jdbcType=DECIMAL},
+      </if>
+      <if test="row.localTimeAttr != null">
+        local_time_attr = #{row.localTimeAttr,jdbcType=TIME},
+      </if>
+      <if test="row.localDateAttr != null">
+        local_date_attr = #{row.localDateAttr,jdbcType=DATE},
+      </if>
+      <if test="row.localDateTimeAttr != null">
+        local_date_time_attr = #{row.localDateTimeAttr,jdbcType=TIMESTAMP},
+      </if>
+      <if test="row.durationAttr != null">
+        duration_attr = #{row.durationAttr,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="example != null">
+      <include refid="Update_By_Param_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByParam" parameterType="map">
+    update demo
+    set id = #{row.id,jdbcType=BIGINT},
+      string_attr = #{row.stringAttr,jdbcType=VARCHAR},
+      integer_attr = #{row.integerAttr,jdbcType=INTEGER},
+      long_attr = #{row.longAttr,jdbcType=BIGINT},
+      big_decimal_attr = #{row.bigDecimalAttr,jdbcType=DECIMAL},
+      local_time_attr = #{row.localTimeAttr,jdbcType=TIME},
+      local_date_attr = #{row.localDateAttr,jdbcType=DATE},
+      local_date_time_attr = #{row.localDateTimeAttr,jdbcType=TIMESTAMP},
+      duration_attr = #{row.durationAttr,jdbcType=BIGINT}
+    <if test="example != null">
+      <include refid="Update_By_Param_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.github.seal90.kiss.multi.integration.db.dos.DemoDO">
+    update demo
+    <set>
+      <if test="stringAttr != null">
+        string_attr = #{stringAttr,jdbcType=VARCHAR},
+      </if>
+      <if test="integerAttr != null">
+        integer_attr = #{integerAttr,jdbcType=INTEGER},
+      </if>
+      <if test="longAttr != null">
+        long_attr = #{longAttr,jdbcType=BIGINT},
+      </if>
+      <if test="bigDecimalAttr != null">
+        big_decimal_attr = #{bigDecimalAttr,jdbcType=DECIMAL},
+      </if>
+      <if test="localTimeAttr != null">
+        local_time_attr = #{localTimeAttr,jdbcType=TIME},
+      </if>
+      <if test="localDateAttr != null">
+        local_date_attr = #{localDateAttr,jdbcType=DATE},
+      </if>
+      <if test="localDateTimeAttr != null">
+        local_date_time_attr = #{localDateTimeAttr,jdbcType=TIMESTAMP},
+      </if>
+      <if test="durationAttr != null">
+        duration_attr = #{durationAttr,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.github.seal90.kiss.multi.integration.db.dos.DemoDO">
+    update demo
+    set string_attr = #{stringAttr,jdbcType=VARCHAR},
+      integer_attr = #{integerAttr,jdbcType=INTEGER},
+      long_attr = #{longAttr,jdbcType=BIGINT},
+      big_decimal_attr = #{bigDecimalAttr,jdbcType=DECIMAL},
+      local_time_attr = #{localTimeAttr,jdbcType=TIME},
+      local_date_attr = #{localDateAttr,jdbcType=DATE},
+      local_date_time_attr = #{localDateTimeAttr,jdbcType=TIMESTAMP},
+      duration_attr = #{durationAttr,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

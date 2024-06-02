@@ -17,8 +17,10 @@ import { InitializrContext } from '../../reducer/Initializr'
 function Fields({
   onSubmit,
   onExplore,
+  onExploreMulti,
   onShare,
   refExplore,
+  refExploreMulti,
   refSubmit,
   refDependency,
   generating,
@@ -183,6 +185,14 @@ function Fields({
         >
           Explore
         </Button>
+        <Button
+          id='explore-project-multi'
+          onClick={onExploreMulti}
+//          hotkey='Ctrl + Space'
+          refButton={refExploreMulti}
+        >
+          Explore Multi
+        </Button>
         <Button id='share-project' onClick={onShare}>
           Share...
         </Button>
@@ -195,11 +205,16 @@ Fields.propTypes = {
   generating: PropTypes.bool.isRequired,
   onSubmit: PropTypes.func.isRequired,
   onExplore: PropTypes.func.isRequired,
+  onExploreMulti: PropTypes.func.isRequired,
   onShare: PropTypes.func.isRequired,
   refExplore: PropTypes.oneOfType([
     PropTypes.func,
     PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
   ]).isRequired,
+  refExploreMulti: PropTypes.oneOfType([
+      PropTypes.func,
+      PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
+    ]).isRequired,
   refSubmit: PropTypes.oneOfType([
     PropTypes.func,
     PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
