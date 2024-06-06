@@ -1,0 +1,54 @@
+seal:
+  kiss:
+    env:
+      run: DAILY
+      gray: GRAY_TEST
+
+spring:
+  application:
+    name: seal-kiss-gateway
+
+  cloud:
+    gateway:
+      routes:
+      - id: static-source
+        uri: http://127.0.0.1
+        predicates:
+          - Path=/static/**
+        filters:
+        - name: StripPrefix
+          args:
+            parts: 1
+        - name: StaticGray
+          args:
+            grayPath: gray
+            grayKeyFromType: BY_HEADER
+            headerKey: X-SEAL-GRAY-FLAG
+            in: ["1", "2"]
+      - id: nacos-metadata
+        uri: lb://seal-kiss-gateway
+        predicates:
+          - Path=/nacos/**
+        filters:
+          - name: PrefixPath
+            args:
+              prefix: /aa
+    nacos:
+      discovery:
+        metadata:
+          a: b
+          c: ${spring.application.name}
+          SEAL-GRAY-ENV: ${seal.kiss.env.gray}
+        server-addr: 127.0.0.1:8848
+
+# Nacos认证信息
+#spring.cloud.nacos.discovery.username=nacos
+#spring.cloud.nacos.discovery.password=nacos
+# Nacos 服务发现与注册配置，其中子属性 server-addr 指定 Nacos 服务器主机和端口
+#spring.cloud.nacos.discovery.server-addr=mse-6d50f4f0-p.nacos-ans.mse.aliyuncs.com:8848
+# 注册到 nacos 的指定 namespace，默认为 public
+#spring.cloud.nacos.discovery.namespace=public
+
+logging:
+  level:
+    org.springframework.cloud.gateway: debug

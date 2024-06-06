@@ -26,3 +26,5 @@ replay_pid*
 *.flattened-pom.xml
 .idea
 *.DS_Store
+
+.vscode
