@@ -10,6 +10,14 @@ spring:
     username: root
     password: seal
     driver-class-name: com.mysql.cj.jdbc.Driver
+  cloud:
+    nacos:
+      discovery:
+        metadata:
+          # Don't modify it
+          # 不要修改它
+          SEAL-GRAY-ENV: ${seal.kiss.env.gray:}
+        server-addr: 127.0.0.1:8848
 
 # mybatis config
 mybatis:

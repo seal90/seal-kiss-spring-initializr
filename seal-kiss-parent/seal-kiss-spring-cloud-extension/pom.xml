@@ -8,22 +8,28 @@
 		<version>${revision}</version>
 	</parent>
 	<groupId>io.github.seal90</groupId>
-	<artifactId>seal-kiss-mybatis-generator-plugin</artifactId>
+	<artifactId>seal-kiss-spring-cloud-extension</artifactId>
 	<version>${revision}</version>
-	<name>seal-kiss-mybatis-generator-plugin</name>
+	<name>seal-kiss-spring-cloud-extension</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
 	</properties>
 	<dependencies>
 		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<optional>true</optional>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.mybatis.generator</groupId>
-			<artifactId>mybatis-generator-core</artifactId>
-			<optional>true</optional>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-loadbalancer</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
@@ -34,12 +40,6 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<skip>true</skip>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
-					</excludes>
 				</configuration>
 			</plugin>
 		</plugins>
