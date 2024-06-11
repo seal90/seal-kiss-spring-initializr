@@ -10,6 +10,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import static io.github.seal90.kiss.gateway.config.GrayConfigurationProperties.SEAL_GRAY_PATH_FLAG;
+import static io.github.seal90.kiss.gateway.support.SealServerWebExchangeUtils.GATEWAY_ALREADY_GRAY_PATH_ATTR;
 import static org.springframework.cloud.gateway.filter.RouteToRequestUrlFilter.ROUTE_TO_URL_FILTER_ORDER;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
 
@@ -17,6 +18,12 @@ public class GrayPathFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        boolean alreadyGray = exchange.getAttributeOrDefault(GATEWAY_ALREADY_GRAY_PATH_ATTR, false);
+        if (alreadyGray) {
+            return chain.filter(exchange);
+        }
+        exchange.getAttributes().put(GATEWAY_ALREADY_GRAY_PATH_ATTR, true);
+
         ServerHttpRequest request = exchange.getRequest();
         HttpHeaders headers = request.getHeaders();
         String grayPath = headers.getFirst(SEAL_GRAY_PATH_FLAG);

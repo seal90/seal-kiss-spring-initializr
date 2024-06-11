@@ -5,6 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClients;
+import reactor.core.publisher.Hooks;
 
 @EnableDiscoveryClient
 @SpringBootApplication
@@ -12,6 +13,7 @@ import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClients;
 public class SealKissGatewayApplication {
 
 	public static void main(String[] args) {
+		Hooks.enableAutomaticContextPropagation();
 		SpringApplication.run(SealKissGatewayApplication.class, args);
 	}
 
