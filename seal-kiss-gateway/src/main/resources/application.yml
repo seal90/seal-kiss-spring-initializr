@@ -17,6 +17,12 @@ seal:
           calculateType: IN
           inValues: [ "1", "2" ]
           targetGrayFlag: gray
+        seal-kiss-multi:
+          modifyType: GRAY_ENV
+          keyFromType: FROM_HEADER
+          calculateType: IN
+          inValues: [ "1", "2" ]
+          targetGrayFlag: gray
     path-limit:
       routeRules:
         static-source:
@@ -31,6 +37,10 @@ seal:
             - method: POST
               path: /nacos/ab
               needAuth: false
+        seal-kiss-multi:
+          pathRules:
+            - method: POST
+              path: /demo/callBipartite
 
 spring:
   application:
@@ -55,19 +65,17 @@ spring:
           - name: PrefixPath
             args:
               prefix: /aa
+      - id: seal-kiss-multi
+        uri: lb://seal-kiss-multi
+        predicates:
+          - Path=/seal-kiss-multi/**
+        filters:
+          - name: StripPrefix
+            args:
+              parts: 1
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
 
-management:
-  tracing:
-    enabled: true
-    sampling:
-      probability: 1
-
-logging:
-  level:
-    org:
-      springframework:
-        cloud:
-          gateway: debug
+server:
+  port: 9090

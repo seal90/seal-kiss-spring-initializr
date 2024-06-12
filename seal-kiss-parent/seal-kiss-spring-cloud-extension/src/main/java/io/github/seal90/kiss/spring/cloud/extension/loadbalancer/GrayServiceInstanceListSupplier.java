@@ -18,53 +18,28 @@ public class GrayServiceInstanceListSupplier extends DelegatingServiceInstanceLi
 
     private final String runEnv;
 
-    private final String grayEnv;
-
-    public GrayServiceInstanceListSupplier(ServiceInstanceListSupplier delegate, String runEnv, String grayEnv) {
+    public GrayServiceInstanceListSupplier(ServiceInstanceListSupplier delegate, String runEnv) {
         super(delegate);
         this.runEnv = runEnv;
-        this.grayEnv = grayEnv;
     }
 
-//    @Override
-//    public Flux<List<ServiceInstance>> get(Request request) {
-//        String reqGrayFlag = grayEnv;
-//        Object context = request.getContext();
-//        if ((context instanceof RequestDataContext)) {
-//            HttpHeaders headers = ((RequestDataContext) context).getClientRequest().getHeaders();
-//            String headerGrayFlag = headers.getFirst(SEAL_GRAY_ENV_FLAG);
-//            if(StringUtils.hasText(headerGrayFlag)) {
-//                reqGrayFlag = headerGrayFlag;
-//            }
-//        }
-//        String finalGrayFlag = reqGrayFlag;
-//        Flux<List<ServiceInstance>> instances = super.getDelegate().get(request);
-//        if(StringUtils.hasText(finalGrayFlag)) {
-//            return instances.map(instanceList ->
-//                            instanceList.stream().filter(
-//                                            instance -> finalGrayFlag.equals(instance.getMetadata().get(SEAL_GRAY_ENV_FLAG))
-//                                    )
-//                                    .collect(Collectors.toList())).filter(instanceList -> !instanceList.isEmpty())
-//                    .switchIfEmpty(instances.map(instanceList ->
-//                            instanceList.stream().filter(
-//                                            instance -> runEnv.equals(instance.getMetadata().get(SEAL_GRAY_ENV_FLAG))
-//                                    )
-//                                    .collect(Collectors.toList())));
-//        }
-//        return instances.map(instanceList ->
-//                instanceList.stream().filter(
-//                                instance -> runEnv.equals(instance.getMetadata().get(SEAL_GRAY_ENV_FLAG))
-//                        )
-//                        .collect(Collectors.toList()));
-//    }
-
     @Override
-    public Flux<List<ServiceInstance>> get() {
-        Flux<List<ServiceInstance>> instances = super.getDelegate().get();
-        if(StringUtils.hasText(grayEnv)) {
+    public Flux<List<ServiceInstance>> get(Request request) {
+        String reqGrayFlag = null;
+        Object context = request.getContext();
+        if ((context instanceof RequestDataContext)) {
+            HttpHeaders headers = ((RequestDataContext) context).getClientRequest().getHeaders();
+            String headerGrayFlag = headers.getFirst(SEAL_GRAY_ENV_FLAG);
+            if(StringUtils.hasText(headerGrayFlag)) {
+                reqGrayFlag = headerGrayFlag;
+            }
+        }
+        String finalGrayFlag = reqGrayFlag;
+        Flux<List<ServiceInstance>> instances = super.getDelegate().get(request);
+        if(StringUtils.hasText(finalGrayFlag)) {
             return instances.map(instanceList ->
                             instanceList.stream().filter(
-                                            instance -> grayEnv.equals(instance.getMetadata().get(SEAL_GRAY_ENV_FLAG))
+                                            instance -> finalGrayFlag.equals(instance.getMetadata().get(SEAL_GRAY_ENV_FLAG))
                                     )
                                     .collect(Collectors.toList())).filter(instanceList -> !instanceList.isEmpty())
                     .switchIfEmpty(instances.map(instanceList ->
@@ -78,5 +53,10 @@ public class GrayServiceInstanceListSupplier extends DelegatingServiceInstanceLi
                                 instance -> runEnv.equals(instance.getMetadata().get(SEAL_GRAY_ENV_FLAG))
                         )
                         .collect(Collectors.toList()));
+    }
+
+    @Override
+    public Flux<List<ServiceInstance>> get() {
+        return null;
     }
 }

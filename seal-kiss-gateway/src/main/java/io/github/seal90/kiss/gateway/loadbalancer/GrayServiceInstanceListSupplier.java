@@ -18,12 +18,9 @@ public class GrayServiceInstanceListSupplier extends DelegatingServiceInstanceLi
 
     private final String runEnv;
 
-    private final String grayEnv;
-
-    public GrayServiceInstanceListSupplier(ServiceInstanceListSupplier delegate, String runEnv, String grayEnv) {
+    public GrayServiceInstanceListSupplier(ServiceInstanceListSupplier delegate, String runEnv) {
         super(delegate);
         this.runEnv = runEnv;
-        this.grayEnv = grayEnv;
     }
 
     @Override

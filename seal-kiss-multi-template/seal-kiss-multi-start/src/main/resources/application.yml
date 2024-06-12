@@ -34,9 +34,3 @@ pagehelper:
   helperDialect: mysql
   reasonable: true
   defaultCount: true
-
-
-management:
-  tracing:
-    sampling:
-      probability: 1.0

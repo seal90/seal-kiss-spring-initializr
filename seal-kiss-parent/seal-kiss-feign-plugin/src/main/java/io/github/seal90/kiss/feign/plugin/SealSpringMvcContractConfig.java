@@ -3,20 +3,25 @@ package io.github.seal90.kiss.feign.plugin;
 import feign.Contract;
 import feign.MethodMetadata;
 
+import feign.RequestInterceptor;
+import feign.RequestTemplate;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.openfeign.AnnotatedParameterProcessor;
 import org.springframework.cloud.openfeign.CollectionFormat;
-//import org.springframework.data.domain.Pageable;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.FeignClientProperties;
 import org.springframework.cloud.openfeign.support.SpringMvcContract;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,11 +44,30 @@ public class SealSpringMvcContractConfig {
 
 	private static final Log LOG = LogFactory.getLog(SealSpringMvcContract.class);
 
+	public static final String SEAL_GRAY_ENV_FLAG = "SEAL-GRAY-ENV";
+
 	@Autowired(required = false)
 	private FeignClientProperties feignClientProperties;
 
 	@Autowired(required = false)
 	private List<AnnotatedParameterProcessor> parameterProcessors = new ArrayList<>();
+
+	@Bean
+	public RequestInterceptor headerRequestInterceptor() {
+		return new RequestInterceptor() {
+			@Override
+			public void apply(RequestTemplate template) {
+				RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
+				if(attributes instanceof ServletRequestAttributes servletRequestAttributes) {
+					HttpServletRequest request = servletRequestAttributes.getRequest();
+					String grayFlag = request.getHeader(SEAL_GRAY_ENV_FLAG);
+					if(StringUtils.hasText(grayFlag)) {
+						template.header(SEAL_GRAY_ENV_FLAG, grayFlag);
+					}
+				}
+			}
+		};
+	}
 
 	@Bean
 	@ConditionalOnProperty(name = "io.github.seal90.feign.mvc.contract", havingValue = "true", matchIfMissing=true)
