@@ -1,14 +1,15 @@
-限流
+# 限流
 https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway/gatewayfilter-factories/requestratelimiter-factory.html
 
-# 接口相关
-## 开放API
-
 # 登陆相关
-## 无须登陆白名单
 ## 登陆设备限制
 ## 登陆踢出
-## 用户功能权限
+
+## 路径操作相关 [LimitPathFilter.java](src%2Fmain%2Fjava%2Fio%2Fgithub%2Fseal90%2Fkiss%2Fgateway%2Ffilter%2FLimitPathFilter.java)
+### 开放API
+所有开放出去的接口必须在网关定义，否则会返回 404（注意接口地址不要出现PathValue）
+### 无须登陆白名单
+### 用户功能权限
 
 # 灰度相关
 ## 服务灰度 - 查找标签

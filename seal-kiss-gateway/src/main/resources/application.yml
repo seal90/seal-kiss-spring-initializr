@@ -17,6 +17,20 @@ seal:
           calculateType: IN
           inValues: [ "1", "2" ]
           targetGrayFlag: gray
+    path-limit:
+      routeRules:
+        static-source:
+          # 只有静态资源可以这样使用
+          allAllow: true
+        nacos-metadata:
+          pathRules:
+            # 全路径，每接口都填写
+            - method: POST
+              path: /nacos/a
+              needAuth: true
+            - method: POST
+              path: /nacos/ab
+              needAuth: false
 
 spring:
   application:
@@ -50,3 +64,10 @@ management:
     enabled: true
     sampling:
       probability: 1
+
+logging:
+  level:
+    org:
+      springframework:
+        cloud:
+          gateway: debug
