@@ -64,6 +64,31 @@ public class Result<T> {
         this.extInfo = HashMap.newHashMap(8);
     }
 
+    public <V> Result(Result<V> result) {
+        Objects.requireNonNull(result);
+        Objects.requireNonNull(result.getCode());
+        Objects.requireNonNull(result.getMsg());
+        Objects.requireNonNull(result.getExtInfo());
+
+        this.code = result.getCode();
+        this.msg = result.getMsg();
+        this.extInfo = new HashMap<>(result.getExtInfo());
+    }
+
+    public <V> Result(Result<V> result, T data) {
+        Objects.requireNonNull(result);
+        Objects.requireNonNull(result.getCode());
+        Objects.requireNonNull(result.getMsg());
+        Objects.requireNonNull(result.getExtInfo());
+
+        this.code = result.getCode();
+        this.msg = result.getMsg();
+
+        this.data = data;
+
+        this.extInfo = new HashMap<>(result.getExtInfo());
+    }
+
     /**
      * 判断是否正确返回
      * @return

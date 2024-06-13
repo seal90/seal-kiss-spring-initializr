@@ -18,8 +18,6 @@ public class GrayConfigurationProperties {
 
     public static final String SEAL_GRAY_PATH_FLAG = "SEAL-GRAY-PATH";
 
-    public static final String SEAL_GRAY_ENV_FLAG = "SEAL-GRAY-ENV";
-
     private Boolean enableClientRequestGrayHeader = true;
 
     private Map<String, GrayRule> routesRule;

@@ -1,5 +1,6 @@
 package io.github.seal90.kiss.gateway.filter;
 
+import io.github.seal90.kiss.core.constant.AppConstant;
 import io.github.seal90.kiss.gateway.config.GrayConfigurationProperties;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -15,7 +16,6 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 import java.util.Map;
 
-import static io.github.seal90.kiss.gateway.config.GrayConfigurationProperties.SEAL_GRAY_ENV_FLAG;
 import static io.github.seal90.kiss.gateway.config.GrayConfigurationProperties.SEAL_GRAY_PATH_FLAG;
 import static org.springframework.cloud.gateway.filter.RouteToRequestUrlFilter.ROUTE_TO_URL_FILTER_ORDER;
 
@@ -37,7 +37,7 @@ public class GrayCalculateFilter implements GlobalFilter, Ordered {
             mutateFlag = true;
             request = request.mutate().headers(toRemoveHeaders -> {
                 toRemoveHeaders.remove(SEAL_GRAY_PATH_FLAG);
-                toRemoveHeaders.remove(SEAL_GRAY_ENV_FLAG);
+                toRemoveHeaders.remove(AppConstant.GRAY_ENV_FLAG);
             }).build();
         }
 
@@ -71,7 +71,7 @@ public class GrayCalculateFilter implements GlobalFilter, Ordered {
                     request = request.mutate().header(SEAL_GRAY_PATH_FLAG, rule.getTargetGrayFlag()).build();
                 } else if (GrayConfigurationProperties.GrayModifyType.GRAY_ENV == rule.getModifyType()) {
                     mutateFlag = true;
-                    request = request.mutate().header(SEAL_GRAY_ENV_FLAG, rule.getTargetGrayFlag()).build();
+                    request = request.mutate().header(AppConstant.GRAY_ENV_FLAG, rule.getTargetGrayFlag()).build();
                 }
             }
         }

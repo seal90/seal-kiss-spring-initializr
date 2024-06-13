@@ -5,6 +5,8 @@ import io.github.seal90.kiss.gateway.auth.LimitAuth;
 import io.github.seal90.kiss.gateway.filter.GrayCalculateFilter;
 import io.github.seal90.kiss.gateway.filter.GrayPathFilter;
 import io.github.seal90.kiss.gateway.filter.LimitPathFilter;
+import io.github.seal90.kiss.gateway.login.service.LoginService;
+import io.github.seal90.kiss.gateway.login.service.impl.AllAllowLoginService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,6 +17,11 @@ public class GatewayConfig {
     @Bean
     public LimitAuth allowAllLimitAuth() {
         return new AllowAllLimitAuth();
+    }
+
+    @Bean
+    public LoginService allAllowLoginService() {
+        return new AllAllowLoginService();
     }
 
     @Bean

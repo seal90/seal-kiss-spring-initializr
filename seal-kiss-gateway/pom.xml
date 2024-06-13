@@ -3,22 +3,27 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.3.0</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<groupId>io.github.seal90</groupId>
+		<artifactId>seal-kiss-parent</artifactId>
+		<version>2.0.2-SNAPSHOT</version>
 	</parent>
 	<groupId>io.github.seal90</groupId>
 	<artifactId>seal-kiss-gateway</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>${revision}</version>
 	<name>seal-kiss-gateway</name>
 	<description>seal-kiss-gateway</description>
 	<properties>
+		<revision>2.0.2-SNAPSHOT</revision>
+
 		<java.version>21</java.version>
 		<spring-cloud.version>2023.0.2</spring-cloud.version>
 		<spring-cloud-alibaba.version>2022.0.0.0-RC2</spring-cloud-alibaba.version>
 	</properties>
 	<dependencies>
+		<dependency>
+			<groupId>io.github.seal90</groupId>
+			<artifactId>seal-kiss-core</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-gateway</artifactId>

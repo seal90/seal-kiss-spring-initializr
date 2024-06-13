@@ -1,5 +1,6 @@
 package io.github.seal90.kiss.gateway.loadbalancer;
 
+import io.github.seal90.kiss.core.constant.AppConstant;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.Request;
 import org.springframework.cloud.client.loadbalancer.RequestDataContext;
@@ -11,8 +12,6 @@ import reactor.core.publisher.Flux;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static io.github.seal90.kiss.gateway.config.GrayConfigurationProperties.SEAL_GRAY_ENV_FLAG;
 
 public class GrayServiceInstanceListSupplier extends DelegatingServiceInstanceListSupplier {
 
@@ -29,7 +28,7 @@ public class GrayServiceInstanceListSupplier extends DelegatingServiceInstanceLi
         Object context = request.getContext();
         if ((context instanceof RequestDataContext)) {
             HttpHeaders headers = ((RequestDataContext) context).getClientRequest().getHeaders();
-            String headerGrayFlag = headers.getFirst(SEAL_GRAY_ENV_FLAG);
+            String headerGrayFlag = headers.getFirst(AppConstant.GRAY_ENV_FLAG);
             if(StringUtils.hasText(headerGrayFlag)) {
                 reqGrayFlag = headerGrayFlag;
             }
@@ -38,14 +37,14 @@ public class GrayServiceInstanceListSupplier extends DelegatingServiceInstanceLi
         Flux<List<ServiceInstance>> instances = super.getDelegate().get(request);
         if(StringUtils.hasText(finalGrayFlag)) {
             return instances.map(instanceList -> instanceList.stream().filter(
-                    instance -> finalGrayFlag.equals(instance.getMetadata().get(SEAL_GRAY_ENV_FLAG)))
+                    instance -> finalGrayFlag.equals(instance.getMetadata().get(AppConstant.GRAY_ENV_FLAG)))
                             .collect(Collectors.toList())).filter(instanceList -> !instanceList.isEmpty())
                     .switchIfEmpty(instances.map(instanceList -> instanceList.stream().filter(
-                            instance -> runEnv.equals(instance.getMetadata().get(SEAL_GRAY_ENV_FLAG)))
+                            instance -> runEnv.equals(instance.getMetadata().get(AppConstant.GRAY_ENV_FLAG)))
                             .collect(Collectors.toList())));
         }
         return instances.map(instanceList -> instanceList.stream().filter(
-                instance -> runEnv.equals(instance.getMetadata().get(SEAL_GRAY_ENV_FLAG)))
+                instance -> runEnv.equals(instance.getMetadata().get(AppConstant.GRAY_ENV_FLAG)))
                 .collect(Collectors.toList()));
     }
 
