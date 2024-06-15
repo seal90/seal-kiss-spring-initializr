@@ -23,7 +23,7 @@ seal:
           calculateType: IN
           inValues: [ "1", "2" ]
           targetGrayFlag: gray
-    path-limit:
+    auth-path-limit:
       routeRules:
         static-source:
           # 只有静态资源可以这样使用
@@ -41,6 +41,14 @@ seal:
           pathRules:
             - method: POST
               path: /demo/callBipartite
+    rate-path-limit:
+      routeRates:
+        seal-kiss-multi:
+          pathRates:
+#            - path: /demo/callBipartite
+#              replenishRate: 1
+#              burstCapacity: 2
+#              requestedTokens: 50
 
 spring:
   application:

@@ -12,5 +12,12 @@ public class AuthCache {
 
     public static final Map<String, BitSet> userToAuthority = new HashMap<>();
 
-    public static final Map<String, Integer> pathAuthKeyToId = new HashMap<>();
+    public static final Map<String, Map<String, Integer>> pathAuthKeyToId = new HashMap<>();
+
+    static {
+        Map<String, Integer> pathId = new HashMap<>();
+        pathId.put("POST_/demo/callBipartite", 1);
+        pathAuthKeyToId.put("seal-kiss-multi", pathId);
+
+    }
 }

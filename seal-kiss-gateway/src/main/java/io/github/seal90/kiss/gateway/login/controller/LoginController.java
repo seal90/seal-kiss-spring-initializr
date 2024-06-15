@@ -10,20 +10,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 @Slf4j
-@Controller
+@RestController
 public class LoginController {
 
     @Autowired
     private LoginService loginService;
 
     @PostMapping("/login")
-    public Mono<Result<LoginResponse>> login(ServerHttpRequest request, @Validated LoginRequest loginRequest) {
+    public Mono<Result<LoginResponse>> login(ServerHttpRequest request, @RequestBody @Validated LoginRequest loginRequest) {
         HttpHeaders headers = request.getHeaders();
         String loginFlag = headers.getFirst(AppConstant.AUTH_HEADER_KEY);
         LoginDTO loginDTO = LoginDTO.builder().loginFlag(loginFlag).terminalType(loginRequest.getTerminalType())

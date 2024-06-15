@@ -15,22 +15,21 @@ import java.util.stream.Collectors;
 @Data
 @Configuration
 @RefreshScope
-@ConfigurationProperties("seal.kiss.path-limit")
-public class LimitConfigurationProperties {
+@ConfigurationProperties("seal.kiss.auth-path-limit")
+public class AuthLimitConfigurationProperties {
 
-    private Map<String, LimitRule> routeRules;
+    private Map<String, RouteRule> routeRules;
 
     @Data
-    public static class LimitRule {
+    public static class RouteRule {
 
         private Boolean allAllow;
 
         private List<PathRule> pathRules;
 
-        // TODO 这个转换如何处理
         private Map<String, Boolean> pathAuth;
 
-        public LimitRule() {
+        public RouteRule() {
             this.allAllow = false;
             this.pathRules = Collections.emptyList();
         }
@@ -42,6 +41,10 @@ public class LimitConfigurationProperties {
                         , PathRule::getNeedAuth, (key1, key2) -> key1));
             }
             return this.pathAuth;
+        }
+
+        public void setPathAuth(Map<String, Boolean> pathAuth) {
+            // ignore any data
         }
 
     }

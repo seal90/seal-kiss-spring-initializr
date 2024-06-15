@@ -1,7 +1,7 @@
 package io.github.seal90.kiss.gateway.filter;
 
-import io.github.seal90.kiss.gateway.auth.LimitAuth;
-import io.github.seal90.kiss.gateway.config.LimitConfigurationProperties;
+import io.github.seal90.kiss.gateway.auth.AuthCheck;
+import io.github.seal90.kiss.gateway.config.AuthLimitConfigurationProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -18,15 +18,15 @@ import reactor.core.publisher.Mono;
 import java.util.Map;
 
 @Slf4j
-public class LimitPathFilter implements GlobalFilter, Ordered {
+public class AuthLimitPathFilter implements GlobalFilter, Ordered {
 
-    private LimitConfigurationProperties limitConfigurationProperties;
+    private AuthLimitConfigurationProperties limitConfigurationProperties;
 
-    private LimitAuth limitAuth;
+    private AuthCheck authCheck;
 
-    public LimitPathFilter(LimitConfigurationProperties limitConfigurationProperties, LimitAuth limitAuth) {
+    public AuthLimitPathFilter(AuthLimitConfigurationProperties limitConfigurationProperties, AuthCheck authCheck) {
         this.limitConfigurationProperties = limitConfigurationProperties;
-        this.limitAuth = limitAuth;
+        this.authCheck = authCheck;
     }
 
     @Override
@@ -36,12 +36,12 @@ public class LimitPathFilter implements GlobalFilter, Ordered {
         HttpMethod httpMethod = request.getMethod();
         RequestPath requestPath = request.getPath();
 
-        Map<String, LimitConfigurationProperties.LimitRule> routeRules = limitConfigurationProperties.getRouteRules();
+        Map<String, AuthLimitConfigurationProperties.RouteRule> routeRules = limitConfigurationProperties.getRouteRules();
         if(null == routeRules) {
             log.info("未配置路径限制规则");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        LimitConfigurationProperties.LimitRule limitRule = routeRules.get(route.getId());
+        AuthLimitConfigurationProperties.RouteRule limitRule = routeRules.get(route.getId());
         if(null == limitRule) {
             log.info("未配置路径限制规则，路由id: {}", route.getId());
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -61,7 +61,7 @@ public class LimitPathFilter implements GlobalFilter, Ordered {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         if(needAuth) {
-            boolean auth = limitAuth.auth(request);
+            boolean auth = authCheck.auth(exchange);
             if(!auth) {
                 log.info("认证未通过，路由id: {}, 路径：{} ", route.getId(), pathAuthKey);
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN);

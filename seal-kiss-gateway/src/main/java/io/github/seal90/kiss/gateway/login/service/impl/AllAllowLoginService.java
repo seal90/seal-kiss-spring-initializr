@@ -36,6 +36,6 @@ public class AllAllowLoginService implements LoginService {
         AuthCache.userToAuthority.put(userId, userAuthority);
 
 
-        return null;
+        return Mono.just(Result.ok(authKey));
     }
 }
