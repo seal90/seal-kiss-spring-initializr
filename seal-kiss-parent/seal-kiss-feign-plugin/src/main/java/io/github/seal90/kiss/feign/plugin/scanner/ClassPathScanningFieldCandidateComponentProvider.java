@@ -477,7 +477,6 @@ public class ClassPathScanningFieldCandidateComponentProvider implements Environ
 				try {
 					ResourceLoader resourceLoader = (this.resourceLoader != null ? this.resourceLoader : new DefaultResourceLoader());
 					ClassLoader classLoader = resourceLoader.getClassLoader();
-					logger.info("className: " + filename );
 
 					try (InputStream is = resource.getInputStream()) {
 						try {
