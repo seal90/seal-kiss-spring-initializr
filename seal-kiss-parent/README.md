@@ -330,7 +330,7 @@ transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 ```
 
 ### 安全
-* 当然用户获取
+* 当前用户获取
   * by header
 * 接口权限
   * by gateway
