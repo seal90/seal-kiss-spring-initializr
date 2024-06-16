@@ -507,7 +507,6 @@ public class ClassPathScanningFieldCandidateComponentProvider implements Environ
 								}
 							}
 
-							logger.info("dd: "+ metadatas.size());
 						}
 						catch (IllegalArgumentException ex) {
 							throw new ClassFormatException("ASM ClassReader failed to parse class file - " +

@@ -4,10 +4,7 @@ import com.github.seal90.kiss.multi.client.demo.req.DataPageReq;
 import com.github.seal90.kiss.multi.client.demo.req.DataReturnMultiReq;
 import com.github.seal90.kiss.multi.client.demo.req.DataReturnReq;
 import com.github.seal90.kiss.multi.client.demo.req.SaveDemoReq;
-import com.github.seal90.kiss.multi.client.demo.resp.DataPageResp;
-import com.github.seal90.kiss.multi.client.demo.resp.DataReturnMultiResp;
-import com.github.seal90.kiss.multi.client.demo.resp.DataReturnResp;
-import com.github.seal90.kiss.multi.client.demo.resp.SaveDemoResp;
+import com.github.seal90.kiss.multi.client.demo.resp.*;
 import com.github.seal90.kiss.multi.client.demo.vo.DemoVO;
 import io.github.seal90.kiss.base.result.Result;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,4 +40,7 @@ public interface DemoClient {
 
     @PostMapping("/callBipartite")
     Result<Void> callBipartite();
+
+    @PostMapping("/configPriority")
+    Result<ConfigPriorityResp> configPriority();
 }

@@ -134,12 +134,19 @@ TODO 考虑将feign 挪到此包下
 增加灰度能力，同环境下多子环境的实现
 * 首先理解两个环境标识，在各个环境由环境变量提供，业务应用无须配置
   * 当前服务运行的主环境(${seal.kiss.env.run:DAILY}) DAILY PRE PROD (seal.kiss.env.gray)
-  * 当前服务要执行灰度的环境(request.header\[SEAL-GRAY-ENV] or ${seal.kiss.env.gray:})，可自定义，可没有（代表不执行灰度，同时代表不可被其他服务调用到）,需求涉及多个服务变更可以设置为共同的灰度标识，则可在线下调试
+  * 当前服务要执行灰度的环境(request.header\[SEAL-GRAY-ENV])，可自定义，可没有（代表不执行灰度，同时代表不可被其他服务调用到）,需求涉及多个服务变更可以设置为共同的灰度标识，则可在线下调试
     * 网关在 request.header\[SEAL-GRAY-ENV] 取值
-    * 服务在 ${seal.kiss.env.gray:} 取值
 * 再思考当前服务要寻找执行服务的规则
   * 当前灰度标识不为空，则优先使用同灰度标识的服务
   * 再次使用主环境标识的服务
+#### 配置文件灰度
+```yaml
+spring:
+  config:
+    import:
+      - optional:nacos:${spring.application.name}.yml
+      - optional:nacos:${spring.application.name}-${seal.kiss.env.gray:}.yml
+```
 
 ### 日志详述
 * 注意事项

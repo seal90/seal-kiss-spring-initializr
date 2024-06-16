@@ -42,6 +42,10 @@
 			<artifactId>spring-boot-starter-aop</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-context</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
@@ -70,6 +74,23 @@
 		<dependency>
 			<groupId>com.alibaba.cloud</groupId>
 			<artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba.cloud</groupId>
+			<artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+		</dependency>
+		<!-- https://github.com/alibaba/spring-cloud-alibaba/issues/3481 -->
+		<!-- https://github.com/alibaba/nacos/issues/10890#issuecomment-1659761681 -->
+		<!-- https://github.com/nacos-group/logback-adapter -->
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${logback.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba.nacos</groupId>
+			<artifactId>logback-adapter</artifactId>
+			<version>1.0.1</version>
 		</dependency>
 
 		<dependency>
