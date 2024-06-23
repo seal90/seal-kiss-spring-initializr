@@ -141,11 +141,7 @@ create table demo (
 * 当前操作人约定
 * 消息消费者的注册
   * integration 调用 service
-* 环境使用
-  * 多环境
-  * 子环境
 * DOCKER 打包
 * 对外能力的暴露
   * 对外暴露协议 http、mq、task
   * 在这个角度讲 client-adapter 应该放到 integration 里面去
-* 注册中心&配置中心
