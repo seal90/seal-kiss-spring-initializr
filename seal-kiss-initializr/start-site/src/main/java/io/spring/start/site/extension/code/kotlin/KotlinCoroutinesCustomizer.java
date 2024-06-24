@@ -41,7 +41,7 @@ public class KotlinCoroutinesCustomizer {
 
 	public KotlinCoroutinesCustomizer(InitializrMetadata metadata, ProjectDescription description,
 			MavenVersionResolver versionResolver) {
-		this.buildResolver = new BuildMetadataResolver(metadata);
+		this.buildResolver = new BuildMetadataResolver(metadata, description.getPlatformVersion());
 		this.description = description;
 		this.versionResolver = versionResolver;
 	}

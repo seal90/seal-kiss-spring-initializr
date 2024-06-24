@@ -20,6 +20,7 @@ import io.spring.initializr.generator.buildsystem.gradle.GradleBuildSystem;
 import io.spring.initializr.generator.condition.ConditionalOnBuildSystem;
 import io.spring.initializr.generator.condition.ConditionalOnRequestedDependency;
 import io.spring.initializr.generator.io.template.MustacheTemplateRenderer;
+import io.spring.initializr.generator.project.ProjectDescription;
 import io.spring.initializr.generator.project.ProjectGenerationConfiguration;
 import io.spring.initializr.generator.spring.build.gradle.ConditionalOnGradleVersion;
 import io.spring.initializr.metadata.InitializrMetadata;
@@ -55,8 +56,8 @@ public class DependencyProjectGenerationConfiguration {
 	}
 
 	@Bean
-	public ReactorTestBuildCustomizer reactorTestBuildCustomizer() {
-		return new ReactorTestBuildCustomizer(this.metadata);
+	public ReactorTestBuildCustomizer reactorTestBuildCustomizer(ProjectDescription description) {
+		return new ReactorTestBuildCustomizer(this.metadata, description);
 	}
 
 	@Bean

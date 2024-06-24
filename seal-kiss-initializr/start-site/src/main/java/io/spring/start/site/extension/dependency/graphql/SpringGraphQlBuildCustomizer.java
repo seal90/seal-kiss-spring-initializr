@@ -19,6 +19,7 @@ package io.spring.start.site.extension.dependency.graphql;
 import io.spring.initializr.generator.buildsystem.Build;
 import io.spring.initializr.generator.buildsystem.Dependency;
 import io.spring.initializr.generator.buildsystem.DependencyScope;
+import io.spring.initializr.generator.project.ProjectDescription;
 import io.spring.initializr.generator.spring.build.BuildCustomizer;
 import io.spring.initializr.generator.spring.build.BuildMetadataResolver;
 import io.spring.initializr.metadata.InitializrMetadata;
@@ -34,8 +35,8 @@ class SpringGraphQlBuildCustomizer implements BuildCustomizer<Build> {
 
 	private final BuildMetadataResolver buildResolver;
 
-	SpringGraphQlBuildCustomizer(InitializrMetadata metadata) {
-		this.buildResolver = new BuildMetadataResolver(metadata);
+	SpringGraphQlBuildCustomizer(InitializrMetadata metadata, ProjectDescription description) {
+		this.buildResolver = new BuildMetadataResolver(metadata, description.getPlatformVersion());
 	}
 
 	@Override

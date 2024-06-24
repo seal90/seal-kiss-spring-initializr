@@ -1,4 +1,4 @@
-package {{MAVEN_PACKAGE_NAME}}.threadpool;
+package {{MAVEN_PACKAGE_NAME}}.start.threadpool;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;

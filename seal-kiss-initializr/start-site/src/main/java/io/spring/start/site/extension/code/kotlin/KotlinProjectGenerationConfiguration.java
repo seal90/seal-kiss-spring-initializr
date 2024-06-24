@@ -50,8 +50,8 @@ class KotlinProjectGenerationConfiguration {
 	}
 
 	@Bean
-	ReactorKotlinExtensionsCustomizer reactorKotlinExtensionsCustomizer(InitializrMetadata metadata) {
-		return new ReactorKotlinExtensionsCustomizer(metadata);
+	ReactorKotlinExtensionsCustomizer reactorKotlinExtensionsCustomizer(InitializrMetadata metadata, ProjectDescription description) {
+		return new ReactorKotlinExtensionsCustomizer(metadata, description);
 	}
 
 	@Configuration

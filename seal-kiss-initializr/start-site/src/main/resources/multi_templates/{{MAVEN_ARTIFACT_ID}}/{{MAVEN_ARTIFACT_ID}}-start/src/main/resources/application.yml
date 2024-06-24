@@ -1,15 +1,32 @@
 spring:
-  threads:
-    virtual:
-      enabled: true
+  main:
+    banner-mode: off
+#  threads:
+#    virtual:
+#      enabled: true
   application:
     name: {{MAVEN_ARTIFACT_ID}}
   datasource:
-#    https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/  spring.datasource.hikari.
+    #    https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/  spring.datasource.hikari.
     url: jdbc:mysql://127.0.0.1:3306/demo?useUnicode=true&characterEncoding=utf8&autoReconnect=true&useSSL=false
     username: root
     password: seal
     driver-class-name: com.mysql.cj.jdbc.Driver
+  cloud:
+    nacos:
+      discovery:
+        metadata:
+          # Don't modify it
+          # 不要修改它
+          SEAL-GRAY-ENV: ${seal.kiss.env.gray:}
+        server-addr: 127.0.0.1:8848
+      config:
+        server-addr: 127.0.0.1:8848
+# https://sca.aliyun.com/docs/2022/user-guide/nacos/advanced-guide/#springcconfigimport-%E5%BC%95%E5%85%A5
+  config:
+    import:
+      - optional:nacos:${spring.application.name}.yml
+      - optional:nacos:${spring.application.name}-${seal.kiss.env.gray:}.yml
 
 # mybatis config
 mybatis:
@@ -26,9 +43,3 @@ pagehelper:
   helperDialect: mysql
   reasonable: true
   defaultCount: true
-
-
-management:
-  tracing:
-    sampling:
-      probability: 1.0

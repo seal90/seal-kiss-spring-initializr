@@ -86,13 +86,14 @@
 
 # 初次使用注意
 ## 日志
-* 查看配置文件配置文件是否满足需求 [logback-spring.xml](seal-kiss-multi-start%2Fsrc%2Fmain%2Fresources%2Flogback-spring.xml)
+* 查看配置文件配置文件是否满足需求 [logback-spring.xml]({{MAVEN_ARTIFACT_ID}}-start%2Fsrc%2Fmain%2Fresources%2Flogback-spring.xml)
   * 默认异步、最长保存7天，每256M一个文件最大10G。
   * 期望将日志打印为JSON,修改参考 https://logback.qos.ch/manual/encoders.html
   * 注入 LazyToString 进行日志对象打印序列化
 ## 打包
 * 修改 [pom.xml](pom.xml) revision 可以修改所有包的版本号
 * 打包前需要先提交代码到git上，此时打包中含有git 信息
+* DOCKER 打包参考 https://docs.spring.io/spring-boot/maven-plugin/build-image.html
 
 # 编码约定
 ## 限制api
@@ -134,16 +135,12 @@ create table demo (
 }
 ```
 
-
-
-
 # TODO
 * mapstract 在修改类后，不自动更新
 * 扩展点使用
 * 当前操作人约定
 * 消息消费者的注册
   * integration 调用 service
-* 环境使用
-  * 多环境
-  * 子环境
-* DOCKER 打包
+* 对外能力的暴露
+  * 对外暴露协议 http、mq、task
+  * 在这个角度讲 client-adapter 应该放到 integration 里面去

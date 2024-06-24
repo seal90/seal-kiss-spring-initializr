@@ -17,6 +17,7 @@
 package io.spring.start.site.extension.dependency.graphql;
 
 import io.spring.initializr.generator.condition.ConditionalOnRequestedDependency;
+import io.spring.initializr.generator.project.ProjectDescription;
 import io.spring.initializr.metadata.InitializrMetadata;
 
 import org.springframework.context.annotation.Bean;
@@ -37,8 +38,8 @@ class SpringGraphQlProjectGenerationConfiguration {
 	}
 
 	@Bean
-	SpringGraphQlBuildCustomizer SpringGraphQlBuildCustomizer(InitializrMetadata initializrMetadata) {
-		return new SpringGraphQlBuildCustomizer(initializrMetadata);
+	SpringGraphQlBuildCustomizer SpringGraphQlBuildCustomizer(InitializrMetadata initializrMetadata, ProjectDescription description) {
+		return new SpringGraphQlBuildCustomizer(initializrMetadata, description);
 	}
 
 }

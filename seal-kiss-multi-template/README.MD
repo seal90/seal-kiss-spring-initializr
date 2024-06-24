@@ -93,6 +93,7 @@
 ## 打包
 * 修改 [pom.xml](pom.xml) revision 可以修改所有包的版本号
 * 打包前需要先提交代码到git上，此时打包中含有git 信息
+* DOCKER 打包参考 https://docs.spring.io/spring-boot/maven-plugin/build-image.html
 
 # 编码约定
 ## 限制api
@@ -137,11 +138,9 @@ create table demo (
 # TODO
 * mapstract 在修改类后，不自动更新
 * 扩展点使用
-* 制作template脚本 [build_template.sh](build_template.sh)
 * 当前操作人约定
 * 消息消费者的注册
   * integration 调用 service
-* DOCKER 打包
 * 对外能力的暴露
   * 对外暴露协议 http、mq、task
   * 在这个角度讲 client-adapter 应该放到 integration 里面去

@@ -43,7 +43,7 @@ public class SpringCloudCircuitBreakerBuildCustomizer implements BuildCustomizer
 	private final ProjectDescription description;
 
 	public SpringCloudCircuitBreakerBuildCustomizer(InitializrMetadata metadata, ProjectDescription description) {
-		this.buildResolver = new BuildMetadataResolver(metadata);
+		this.buildResolver = new BuildMetadataResolver(metadata, description.getPlatformVersion());
 		this.metadata = metadata;
 		this.description = description;
 	}

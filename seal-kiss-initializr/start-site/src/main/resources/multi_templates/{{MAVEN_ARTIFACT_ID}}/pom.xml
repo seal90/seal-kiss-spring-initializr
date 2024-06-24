@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>io.github.seal90</groupId>
 		<artifactId>seal-kiss-parent</artifactId>
-		<version>{{SEAL-KISS-PARENT-VERSION}}</version>
+		<version>2.0.2-SNAPSHOT</version>
 		<relativePath/>
 	</parent>
 	<groupId>{{MAVEN_GROUP_ID}}</groupId>

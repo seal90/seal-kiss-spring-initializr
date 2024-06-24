@@ -34,3 +34,5 @@ build/
 
 *.flattened-pom.xml
 *.DS_Store
+
+.multi_templates

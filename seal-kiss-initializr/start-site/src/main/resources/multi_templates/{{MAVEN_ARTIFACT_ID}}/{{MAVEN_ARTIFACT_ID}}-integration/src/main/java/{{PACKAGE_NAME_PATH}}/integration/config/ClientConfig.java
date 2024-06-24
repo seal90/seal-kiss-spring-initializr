@@ -7,8 +7,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ClientConfig {
 
-    @FeignConsumer(name = "demo", url = "http://localhost:8080")
+    @FeignConsumer(name = "seal-kiss-multi")
     private HelloWorldClient helloWorldClientFacade;
+
+//    @FeignConsumer(name = "seal-kiss-multi", url = "http://localhost:8080")
+//    private HelloWorldClient helloWorldClientFacade;
 
 
 
