@@ -1,6 +1,5 @@
 package io.github.seal90.kiss.gateway.filter;
 
-import io.github.seal90.kiss.core.constant.AppConstant;
 import io.github.seal90.kiss.gateway.config.GrayConfigurationProperties;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -37,7 +36,7 @@ public class GrayCalculateFilter implements GlobalFilter, Ordered {
             mutateFlag = true;
             request = request.mutate().headers(toRemoveHeaders -> {
                 toRemoveHeaders.remove(SEAL_GRAY_PATH_FLAG);
-                toRemoveHeaders.remove(AppConstant.GRAY_ENV_FLAG);
+                toRemoveHeaders.remove(grayConfigurationProperties.getSubSetEnvRequestKey());
             }).build();
         }
 
@@ -71,7 +70,7 @@ public class GrayCalculateFilter implements GlobalFilter, Ordered {
                     request = request.mutate().header(SEAL_GRAY_PATH_FLAG, rule.getTargetGrayFlag()).build();
                 } else if (GrayConfigurationProperties.GrayModifyType.GRAY_ENV == rule.getModifyType()) {
                     mutateFlag = true;
-                    request = request.mutate().header(AppConstant.GRAY_ENV_FLAG, rule.getTargetGrayFlag()).build();
+                    request = request.mutate().header(grayConfigurationProperties.getSubSetEnvRequestKey(), rule.getTargetGrayFlag()).build();
                 }
             }
         }

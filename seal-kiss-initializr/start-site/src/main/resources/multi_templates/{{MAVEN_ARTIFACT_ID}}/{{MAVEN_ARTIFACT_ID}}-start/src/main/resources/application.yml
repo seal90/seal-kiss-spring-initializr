@@ -18,7 +18,8 @@ spring:
         metadata:
           # Don't modify it
           # 不要修改它
-          SEAL-GRAY-ENV: ${seal.kiss.env.gray:}
+          main-zone-env: ${seal.kiss.env.main:DAILY}
+          sub-set-zone-env: ${seal.kiss.env.subSet:}
         server-addr: 127.0.0.1:8848
       config:
         server-addr: 127.0.0.1:8848

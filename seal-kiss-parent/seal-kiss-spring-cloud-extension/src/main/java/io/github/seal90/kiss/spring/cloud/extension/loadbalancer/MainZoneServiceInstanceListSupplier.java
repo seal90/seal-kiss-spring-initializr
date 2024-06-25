@@ -1,4 +1,4 @@
-package io.github.seal90.kiss.gateway.loadbalancer;
+package io.github.seal90.kiss.spring.cloud.extension.loadbalancer;
 
 import io.github.seal90.kiss.core.constant.AppConstant;
 import org.springframework.cloud.client.ServiceInstance;
@@ -13,38 +13,46 @@ import reactor.core.publisher.Flux;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class GrayServiceInstanceListSupplier extends DelegatingServiceInstanceListSupplier {
+/**
+ * 主环境灰度
+ *
+ */
+public class MainZoneServiceInstanceListSupplier extends DelegatingServiceInstanceListSupplier {
 
-    private final String runEnv;
+    private final String mainEnv;
 
-    public GrayServiceInstanceListSupplier(ServiceInstanceListSupplier delegate, String runEnv) {
+    private final String subSetEnvRequestKey;
+
+    public MainZoneServiceInstanceListSupplier(ServiceInstanceListSupplier delegate, String mainEnv, String subSetEnvRequestKey) {
         super(delegate);
-        this.runEnv = runEnv;
+        this.mainEnv = mainEnv;
+        this.subSetEnvRequestKey = subSetEnvRequestKey;
     }
 
     @Override
     public Flux<List<ServiceInstance>> get(Request request) {
-        String reqGrayFlag = null;
+        String subSetEnvFlag = null;
         Object context = request.getContext();
         if ((context instanceof RequestDataContext)) {
             HttpHeaders headers = ((RequestDataContext) context).getClientRequest().getHeaders();
-            String headerGrayFlag = headers.getFirst(AppConstant.GRAY_ENV_FLAG);
+            String headerGrayFlag = headers.getFirst(subSetEnvRequestKey);
             if(StringUtils.hasText(headerGrayFlag)) {
-                reqGrayFlag = headerGrayFlag;
+                subSetEnvFlag = headerGrayFlag;
             }
         }
-        String finalGrayFlag = reqGrayFlag;
+
+        String finalSubSetEnvFlag = subSetEnvFlag;
         Flux<List<ServiceInstance>> instances = super.getDelegate().get(request);
-        if(StringUtils.hasText(finalGrayFlag)) {
+        if(StringUtils.hasText(finalSubSetEnvFlag)) {
             return instances.map(instanceList -> instanceList.stream().filter(
-                    instance -> finalGrayFlag.equals(instance.getMetadata().get(AppConstant.GRAY_ENV_FLAG)))
+                    instance -> finalSubSetEnvFlag.equals(instance.getMetadata().get(AppConstant.MAIN_ZONE_ENV)))
                             .collect(Collectors.toList())).filter(instanceList -> !instanceList.isEmpty())
                     .switchIfEmpty(instances.map(instanceList -> instanceList.stream().filter(
-                            instance -> runEnv.equals(instance.getMetadata().get(AppConstant.GRAY_ENV_FLAG)))
+                            instance -> mainEnv.equals(instance.getMetadata().get(AppConstant.MAIN_ZONE_ENV)))
                             .collect(Collectors.toList())));
         }
         return instances.map(instanceList -> instanceList.stream().filter(
-                instance -> runEnv.equals(instance.getMetadata().get(AppConstant.GRAY_ENV_FLAG)))
+                instance -> mainEnv.equals(instance.getMetadata().get(AppConstant.MAIN_ZONE_ENV)))
                 .collect(Collectors.toList()));
     }
 

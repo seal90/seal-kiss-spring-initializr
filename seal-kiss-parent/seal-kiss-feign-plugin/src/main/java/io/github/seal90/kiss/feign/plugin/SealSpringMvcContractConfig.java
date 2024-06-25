@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.openfeign.AnnotatedParameterProcessor;
 import org.springframework.cloud.openfeign.CollectionFormat;
@@ -44,7 +45,8 @@ public class SealSpringMvcContractConfig {
 
 	private static final Log LOG = LogFactory.getLog(SealSpringMvcContract.class);
 
-	public static final String SEAL_GRAY_ENV_FLAG = "SEAL-GRAY-ENV";
+	@Value("${seal.kiss.gray.subSetEnvRequestKey:SUB_SET_ENV}")
+	private String subSetEnvRequestKey;
 
 	@Autowired(required = false)
 	private FeignClientProperties feignClientProperties;
@@ -60,9 +62,9 @@ public class SealSpringMvcContractConfig {
 				RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
 				if(attributes instanceof ServletRequestAttributes servletRequestAttributes) {
 					HttpServletRequest request = servletRequestAttributes.getRequest();
-					String grayFlag = request.getHeader(SEAL_GRAY_ENV_FLAG);
+					String grayFlag = request.getHeader(subSetEnvRequestKey);
 					if(StringUtils.hasText(grayFlag)) {
-						template.header(SEAL_GRAY_ENV_FLAG, grayFlag);
+						template.header(subSetEnvRequestKey, grayFlag);
 					}
 				}
 			}

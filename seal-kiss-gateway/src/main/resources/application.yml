@@ -1,8 +1,8 @@
 seal:
   kiss:
 #    env:
-#      run: DAILY
-#      gray: GRAY_TEST
+#      main: DAILY
+#      subSet: GRAY_TEST
     gray:
       routesRule:
         static-source:

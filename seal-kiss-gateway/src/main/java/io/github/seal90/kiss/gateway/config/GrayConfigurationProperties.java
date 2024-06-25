@@ -1,6 +1,7 @@
 package io.github.seal90.kiss.gateway.config;
 
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,8 @@ public class GrayConfigurationProperties {
     public static final String GRAY_CALC_HEADER = "X-GRAY-CALC";
 
     public static final String SEAL_GRAY_PATH_FLAG = "SEAL-GRAY-PATH";
+
+    private String subSetEnvRequestKey = "SUB_SET_ENV";
 
     private Boolean enableClientRequestGrayHeader = true;
 

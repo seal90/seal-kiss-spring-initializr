@@ -4,7 +4,7 @@ import io.github.seal90.kiss.core.config.ExceptionAdviceConfig;
 import io.github.seal90.kiss.core.config.ExceptionGlobalConfig;
 import io.github.seal90.kiss.core.config.LogConfig;
 import io.github.seal90.kiss.feign.plugin.EnableFeignConsumers;
-import io.github.seal90.kiss.spring.cloud.extension.loadbalancer.GrayServiceInstanceListSupplierConfiguration;
+import io.github.seal90.kiss.spring.cloud.extension.loadbalancer.MultiMainZoneServiceInstanceListSupplierConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -18,7 +18,7 @@ import org.springframework.context.annotation.*;
 @EnableFeignClients
 @EnableFeignConsumers
 @EnableDiscoveryClient
-@LoadBalancerClients(defaultConfiguration = GrayServiceInstanceListSupplierConfiguration.class)
+@LoadBalancerClients(defaultConfiguration = MultiMainZoneServiceInstanceListSupplierConfiguration.class)
 public class StartApplication {
 
 	public static void main(String[] args) {

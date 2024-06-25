@@ -1,6 +1,6 @@
 package io.github.seal90.kiss.gateway;
 
-import io.github.seal90.kiss.gateway.loadbalancer.GrayServiceInstanceListSupplierConfiguration;
+import io.github.seal90.kiss.spring.cloud.extension.loadbalancer.MultiMainZoneServiceInstanceListSupplierConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -9,7 +9,7 @@ import reactor.core.publisher.Hooks;
 
 @EnableDiscoveryClient
 @SpringBootApplication
-@LoadBalancerClients(defaultConfiguration = GrayServiceInstanceListSupplierConfiguration.class)
+@LoadBalancerClients(defaultConfiguration = MultiMainZoneServiceInstanceListSupplierConfiguration.class)
 public class SealKissGatewayApplication {
 
 	public static void main(String[] args) {
