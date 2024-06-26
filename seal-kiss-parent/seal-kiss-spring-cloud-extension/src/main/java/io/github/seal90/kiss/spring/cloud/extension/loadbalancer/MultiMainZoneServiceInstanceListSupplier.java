@@ -45,11 +45,13 @@ public class MultiMainZoneServiceInstanceListSupplier  extends DelegatingService
                                             && finalSubSetEnvFlag.equals(instance.getMetadata().get(AppConstant.SUB_SET_ZONE_ENV)))
                             .collect(Collectors.toList())).filter(instanceList -> !instanceList.isEmpty())
                     .switchIfEmpty(instances.map(instanceList -> instanceList.stream().filter(
-                                    instance -> mainEnv.equals(instance.getMetadata().get(AppConstant.MAIN_ZONE_ENV)))
+                                    instance -> mainEnv.equals(instance.getMetadata().get(AppConstant.MAIN_ZONE_ENV))
+                                            && mainEnv.equals(instance.getMetadata().get(AppConstant.SUB_SET_ZONE_ENV)))
                             .collect(Collectors.toList())));
         }
         return instances.map(instanceList -> instanceList.stream().filter(
-                        instance -> mainEnv.equals(instance.getMetadata().get(AppConstant.MAIN_ZONE_ENV)))
+                        instance -> mainEnv.equals(instance.getMetadata().get(AppConstant.MAIN_ZONE_ENV))
+                                && mainEnv.equals(instance.getMetadata().get(AppConstant.SUB_SET_ZONE_ENV)))
                 .collect(Collectors.toList()));
     }
 
