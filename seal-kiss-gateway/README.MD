@@ -1,7 +1,7 @@
 # 限流
 spring 官方提供了 RequestRateLimiterGatewayFilterFactory 来实现限流 https://docs.spring.io/spring-cloud-gateway/reference/spring-cloud-gateway/gatewayfilter-factories/requestratelimiter-factory.html
-RequestRateLimiterGatewayFilterFactory 是作用在路由上的，同一个路由中出现例如秒杀接口，其流量会超过其他接口的大小限制很多，可以选择将其接口独立出一个路由来实现，或者使用 [RateLimitPathFilter.java](src%2Fmain%2Fjava%2Fio%2Fgithub%2Fseal90%2Fkiss%2Fgateway%2Ffilter%2FRateLimitPathFilter.java)
-目前 [RateLimitPathFilter.java](src%2Fmain%2Fjava%2Fio%2Fgithub%2Fseal90%2Fkiss%2Fgateway%2Ffilter%2FRateLimitPathFilter.java) 使用的是单节点限流，若网关数量基本固定不变，nginx 采用轮询方式时，则可以使用 限流/节点数 来配置限流量，也可以改为使用 redis 来实现，redis 方式已注释在源代码中
+<br/> RequestRateLimiterGatewayFilterFactory 是作用在路由上的，同一个路由中出现例如秒杀接口，其流量会超过其他接口的大小限制很多，可以选择将其接口独立出一个路由来实现，或者使用 [RateLimitPathFilter.java](src%2Fmain%2Fjava%2Fio%2Fgithub%2Fseal90%2Fkiss%2Fgateway%2Ffilter%2FRateLimitPathFilter.java)
+<br/> 目前 [RateLimitPathFilter.java](src%2Fmain%2Fjava%2Fio%2Fgithub%2Fseal90%2Fkiss%2Fgateway%2Ffilter%2FRateLimitPathFilter.java) 使用的是单节点限流，若网关数量基本固定不变，nginx 采用轮询方式时，则可以使用 限流/节点数 来配置限流量，也可以改为使用 redis 来实现，redis 方式已注释在源代码中
 
 # 登陆相关
 ## 路径操作相关 [LimitPathFilter.java](src%2Fmain%2Fjava%2Fio%2Fgithub%2Fseal90%2Fkiss%2Fgateway%2Ffilter%2FLimitPathFilter.java)
@@ -23,22 +23,24 @@ RequestRateLimiterGatewayFilterFactory 是作用在路由上的，同一个路�
 # 灰度相关
 ## 服务灰度 
 ### 灰度规则计算 [GrayCalculateFilter.java](src%2Fmain%2Fjava%2Fio%2Fgithub%2Fseal90%2Fkiss%2Fgateway%2Ffilter%2FGrayCalculateFilter.java)
-灰度标识可能来自两方面，一 前端传递，二根据标识计算，标识包括登陆人，前端传递用于计算的值等。使用 seal.kiss.gray.subSetEnvRequestKey:SUB_SET_ENV 头传递
+灰度标识可能来自两方面，一 前端传递，二根据标识计算，标识包括登陆人，前端传递用于计算的值等。
+<br/> 使用 seal.kiss.gray.subSetEnvRequestKey:SUB_SET_ENV 头传递
+
 ### 灰度规则执行 - 多主环境灰度
 两个环境标识：主环境标识，用于区分多个不同主环境；子环境标识，用于本主环境下灰度服务选择。
-在注册服务时，两个标识默认都为空，需要配置 seal.kiss.env.main seal.kiss.env.subSet 环境变量
-在调用时，主环境标识，默认 DAILY； 子环境标识，默认无
-在服务调用时，选择同主环境，优先选择同灰度环境，再选择同主环境同名的子环境
+<br/> 在注册服务时，两个标识默认都为空，需要配置 seal.kiss.env.main seal.kiss.env.subSet 环境变量
+<br/> 在调用时，主环境标识，默认 DAILY； 子环境标识，默认无
+<br/> 在选择实例时，选择同主环境，优先选择同灰度环境，再选择同主环境同名的子环境
 
 ## 前端灰度 - 修改路由uri [GrayPathFilter.java](src%2Fmain%2Fjava%2Fio%2Fgithub%2Fseal90%2Fkiss%2Fgateway%2Ffilter%2FGrayPathFilter.java)
-假设url设计 protocol://hostname[:port]/static/{project}/**/*.*
-协议://主机名[:端口]/固定static/{前端发布工程名}/任意级目录/任意文件
-灰度实现
-多级
-protocol://hostname[:port]/static/{project}/{GRAY_FLAG}/**/*.*
-一级
-protocol://hostname[:port]/static/{GRAY_FLAG}/{any_file}
+假设url设计 protocol://hostname[:port]/static/{project}/\*\*/\*.\*
+<br/> 协议://主机名[:端口]/固定static/{前端发布工程名}/任意级目录/任意文件
+<br/> 灰度实现
+<br/> 多级
+<br/> protocol://hostname[:port]/static/{project}/{GRAY_FLAG}/**/*.*
+<br/> 一级
+<br/> protocol://hostname[:port]/static/{GRAY_FLAG}/{any_file}
 
 # 类
 DiscoveryClientServiceInstanceListSupplier
-LoadBalancerClientConfiguration
+<br/> LoadBalancerClientConfiguration

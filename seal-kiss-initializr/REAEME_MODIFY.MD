@@ -1,6 +1,6 @@
 # 使用
 执行下面命令可打包出文件
-注意由于start-client使用了nodejs，若是调试，需要先执行下面命令将start-client编译
+<br/> 注意由于start-client使用了nodejs，若是调试，需要先执行下面命令将 start-client 编译
 ```shell
 mvn -Dmaven.test.skip=true clean install
 ```
@@ -25,7 +25,7 @@ mvn -Dmaven.test.skip=true clean install
 
 ## [StartInitializrMetadataUpdateStrategy.java](start-site%2Fsrc%2Fmain%2Fjava%2Fio%2Fspring%2Fstart%2Fsite%2Fsupport%2FStartInitializrMetadataUpdateStrategy.java)
 * Spring Boot 限定统一使用 3.2.5
-fetchSpringBootVersions Spring Boot 版本由获取服务器上的信息改为获取本地 [project_metadata.json](start-site%2Fsrc%2Fmain%2Fresources%2Fproject_metadata.json)
+<br/> fetchSpringBootVersions Spring Boot 版本由获取服务器上的信息改为获取本地 [project_metadata.json](start-site%2Fsrc%2Fmain%2Fresources%2Fproject_metadata.json)
 
 # 重要的类
 * ProjectGenerationController

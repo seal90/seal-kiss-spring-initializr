@@ -39,7 +39,7 @@ client-adapter
     * 通过特定协议暴露接口给调用者
     * 链接接口与服务
 service
-    * 领域服务能力的实现
+    * 领域服务业务的实现
     * 依赖二方/中间件能力声明
 integration
     * 依赖二方/中间件能力实现
@@ -53,7 +53,7 @@ start
 实现时的包依赖
 * client
 
-引入 jakarta.validation-api，由于 scope=provided 所以在使用者不引入校验则也可以正常运行 ,由于 spring-boot-starter-validation 会引入整个spring-boot, 避免错误引入所以这里未使用
+引入 jakarta.validation-api，由于 scope=provided 所以在二方使用者使用时，不引入校验则也可以正常运行 ,由于 spring-boot-starter-validation 会引入整个spring-boot, 避免错误引入所以这里未使用
 ```xml
 		<dependency>
 			<groupId>jakarta.validation</groupId>
@@ -138,10 +138,15 @@ Feign 不允许注册 @RequestMapping 修改 SpringMvcContract
 TODO 考虑将feign 挪到此包下
 #### loadbalancer 的扩展 [loadbalancer](seal-kiss-spring-cloud-extension%2Fsrc%2Fmain%2Fjava%2Fio%2Fgithub%2Fseal90%2Fkiss%2Fspring%2Fcloud%2Fextension%2Floadbalancer)
 [MultiMainZoneServiceInstanceListSupplier.java](seal-kiss-spring-cloud-extension%2Fsrc%2Fmain%2Fjava%2Fio%2Fgithub%2Fseal90%2Fkiss%2Fspring%2Fcloud%2Fextension%2Floadbalancer%2FMultiMainZoneServiceInstanceListSupplier.java)
+
 两个环境标识：主环境标识，用于区分多个不同主环境；子环境标识，用于本主环境下灰度服务选择。
+
 在注册服务时，两个标识默认都为空，需要配置 seal.kiss.env.main seal.kiss.env.subSet 环境变量
+
 在调用时，主环境标识，默认 DAILY； 子环境标识，默认无
+
 在服务调用时，选择同主环境，优先选择同灰度环境，再选择同主环境同名的子环境
+
 #### 配置文件灰度
 优先使用灰度名称的，再选择使用服务名称的配置文件
 ```yaml

@@ -11,7 +11,7 @@
 
 ## 快速构建初始化项目 [seal-kiss-initializr](seal-kiss-initializr)
 部署此项目可以与 https://start.spring.io/ 一样快速初始化出自己的项目。
-构建项目模板来自 [seal-kiss-multi-template](seal-kiss-multi-template)
+<br/>构建项目模板来自 [seal-kiss-multi-template](seal-kiss-multi-template)
 
 ## 经验积累 [seal-kiss-parent](seal-kiss-parent)
 经验积累，以及功能增强，详见 [README](seal-kiss-parent/README.md)

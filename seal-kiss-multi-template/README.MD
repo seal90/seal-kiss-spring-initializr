@@ -97,7 +97,8 @@
 
 # 编码约定
 ## 限制api
-* 业务代码不要使用 ThreadLocal,Aop
+* 业务代码不要使用 ThreadLocal,Aop(强制)
+* 日期类型使用 java8新增的类型
 
 # 示例代码启动
 ## 数据库 sql
