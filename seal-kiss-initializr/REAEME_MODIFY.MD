@@ -6,6 +6,9 @@ mvn -Dmaven.test.skip=true clean install
 ```
 
 # 修改内容
+## 模板
+使用 [build_template](../seal-kiss-multi-template/build_template.sh) 构建出模板，拷贝到 [multi_templates](start-site/src/main/resources/multi_templates) 目录下
+
 ## [Initializr.js](start-client%2Fsrc%2Fcomponents%2Freducer%2FInitializr.js)
 修改 Package name = Group + Artifact.replaceAll('-','.')
 

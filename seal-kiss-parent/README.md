@@ -1,5 +1,5 @@
 # seal-kiss-parent
-通用、常见的好的工具定义及汇总
+通用、常见的友好的工具定义及汇总
 
 # 关键点
 ## jdk 21
@@ -11,10 +11,10 @@
 使用 flatten-maven-plugin 对项目版本统一管理，修改 parent pom \<revision>0.0.1-SNAPSHOT\</revision> 可对所有模块版本生效
 
 ## 添加打包 git 信息
-使用 git-commit-id-maven-plugin 将git提交信息放到打的包里面，对于长期不维护的项目，可根据包里面的git信息查看正在运行代码版本。
+使用 git-commit-id-maven-plugin 将git提交信息放到打的包里面，对于长期不维护的项目，可根据包里面的git信息查看正在运行代码版本。注意第一次打包时需先执行git commit操作，否则会阻止打包。
 
 ## loombok
-使用 loombok 可快速生成get set 方法。
+使用 loombok 可快速生成 get set 方法。
 
 ## mapstruct
 使用 mapstruct 可以快速编写出类型转换（beanutils 使用反射，mapstruct生成java类），为方便写单元测试，这里不要和spring配合使用。
@@ -67,7 +67,7 @@ start
         <!--			<scope>provided</scope>-->
         <!--		</dependency>-->
 ```
-引入 spring-web 请求路径
+引入 spring-web 增加请求路径类
 ```xml
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -117,35 +117,39 @@ protected boolean isHandler(Class<?> beanType) {
 
 Feign 不允许注册 @RequestMapping 修改 SpringMvcContract
 ```java
-	@Override
-	protected void processAnnotationOnClass(MethodMetadata data, Class<?> clz) {
-		CollectionFormat collectionFormat = findMergedAnnotation(clz, CollectionFormat.class);
-		if (collectionFormat != null) {
-			feign.CollectionFormat value = collectionFormat.value();
+		@Override
+		protected void processAnnotationOnClass(MethodMetadata data, Class<?> clz) {
+			RequestMapping classAnnotation = findMergedAnnotation(clz, RequestMapping.class);
+			FeignClient feignClassAnnotation = findMergedAnnotation(clz, FeignClient.class);
+			if (classAnnotation != null && feignClassAnnotation != null) {
+				LOG.error("Cannot process class: " + clz.getName()
+						+ ". @RequestMapping annotation is not allowed on @FeignClient interfaces.");
+				throw new IllegalArgumentException("@RequestMapping annotation not allowed on @FeignClient interfaces");
+			}
 
-			data.template().collectionFormat(collectionFormat.value());
+			CollectionFormat collectionFormat = findMergedAnnotation(clz, CollectionFormat.class);
+			if (collectionFormat != null) {
+				data.template().collectionFormat(collectionFormat.value());
+			}
 		}
-	}
 ```
 
 ### [seal-kiss-spring-cloud-extension](seal-kiss-spring-cloud-extension) spring cloud 的能力延伸
 TODO 考虑将feign 挪到此包下
 #### loadbalancer 的扩展 [loadbalancer](seal-kiss-spring-cloud-extension%2Fsrc%2Fmain%2Fjava%2Fio%2Fgithub%2Fseal90%2Fkiss%2Fspring%2Fcloud%2Fextension%2Floadbalancer)
-增加灰度能力，同环境下多子环境的实现
-* 首先理解两个环境标识，在各个环境由环境变量提供，业务应用无须配置
-  * 当前服务运行的主环境(${seal.kiss.env.run:DAILY}) DAILY PRE PROD (seal.kiss.env.gray)
-  * 当前服务要执行灰度的环境(request.header\[SEAL-GRAY-ENV])，可自定义，可没有（代表不执行灰度，同时代表不可被其他服务调用到）,需求涉及多个服务变更可以设置为共同的灰度标识，则可在线下调试
-    * 网关在 request.header\[SEAL-GRAY-ENV] 取值
-* 再思考当前服务要寻找执行服务的规则
-  * 当前灰度标识不为空，则优先使用同灰度标识的服务
-  * 再次使用主环境标识的服务
+[MultiMainZoneServiceInstanceListSupplier.java](seal-kiss-spring-cloud-extension%2Fsrc%2Fmain%2Fjava%2Fio%2Fgithub%2Fseal90%2Fkiss%2Fspring%2Fcloud%2Fextension%2Floadbalancer%2FMultiMainZoneServiceInstanceListSupplier.java)
+两个环境标识：主环境标识，用于区分多个不同主环境；子环境标识，用于本主环境下灰度服务选择。
+在注册服务时，两个标识默认都为空，需要配置 seal.kiss.env.main seal.kiss.env.subSet 环境变量
+在调用时，主环境标识，默认 DAILY； 子环境标识，默认无
+在服务调用时，选择同主环境，优先选择同灰度环境，再选择同主环境同名的子环境
 #### 配置文件灰度
+优先使用灰度名称的，再选择使用服务名称的配置文件
 ```yaml
 spring:
   config:
     import:
       - optional:nacos:${spring.application.name}.yml
-      - optional:nacos:${spring.application.name}-${seal.kiss.env.gray:}.yml
+      - optional:nacos:${spring.application.name}-${seal.kiss.env.subSet:}.yml
 ```
 
 ### 日志详述
@@ -203,131 +207,6 @@ transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 * mybatis 配置
   * mybatis 配置参数 https://mybatis.org/spring-boot-starter/mybatis-spring-boot-autoconfigure/
   * 默认使用了 HikariCP 数据库连接池，其配置 spring.datasource.hikari.* 配置类为 DataSourceProperties
-
-### 线程池的选择
-* 执行超时时间结束，线程结束
-```java
-
-    /**
-     * invokeAll(tasks, 2, TimeUnit.SECONDS);
-     * 执行2s之内的成功获取到结果，超时的的到 InterruptedException，获取结果时 CancellationException
-     */
-    @Test
-    public void test3() {
-        // 创建线程池
-        ExecutorService executor = Executors.newFixedThreadPool(5);
-
-        // 创建任务列表
-        List<Callable<String>> tasks = List.of(
-                () -> {
-                    try {
-                        System.out.println("1开始执行");
-                        Thread.sleep(1000); // 模拟耗时操作
-                        System.out.println("1结束执行");
-                    }catch (Exception e){
-                        e.printStackTrace();
-                        System.out.println("1Exception 结束");
-                    }
-                    return "Task 1 completed";
-                },
-                () -> {
-                    try {
-                        System.out.println("2开始执行");
-                        Thread.sleep(3000); // 模拟耗时操作
-                        System.out.println("2结束执行");
-                    }catch (Exception e){
-                        e.printStackTrace();
-                        System.out.println("2Exception 结束");
-                    }
-                    return "Task 2 completed";
-                },
-                () -> {
-                    try {
-                        System.out.println("3开始执行");
-                        Thread.sleep(1000); // 模拟耗时操作
-                        System.out.println("3结束执行");
-                    }catch (Exception e){
-                        e.printStackTrace();
-                        System.out.println("3Exception 结束");
-                    }
-                    return "Task 3 completed";
-                }
-        );
-
-        try {
-            // 执行任务并设置超时时间为2秒
-            List<Future<String>> futures = executor.invokeAll(tasks, 2, TimeUnit.SECONDS);
-
-            // 遍历任务结果
-            for (Future<String> future : futures) {
-                System.out.println("开始获取结果");
-                try {
-                    String result = future.get();
-                    System.out.println(result);
-                } catch (Exception e) {
-                    System.out.println("获取结果异常");
-                    e.printStackTrace();
-                }
-            }
-        } catch (InterruptedException e) {
-//            e.printStackTrace();
-        } finally {
-            // 关闭线程池
-//            executor.shutdown();
-        }
-
-        try {
-            Thread.sleep(30000L);
-        } catch (InterruptedException e) {
-        }
-    }
-```
-* 执行超时时间结束，线程继续
-```java
-    /**
-     * get(3, TimeUnit.SECONDS); 
-     * get 3s 超时后，执行线程依旧执行完成了任务
-     * 即打印出 打印结束
-     */    
-    @Test
-    public void test1() {
-        ThreadPoolTaskExecutor threadPoolTaskExecutor = new ThreadPoolTaskExecutor();
-        threadPoolTaskExecutor.setCorePoolSize(50);
-        threadPoolTaskExecutor.setMaxPoolSize(50);
-        threadPoolTaskExecutor.setRejectedExecutionHandler((r,executor)-> {
-            throw new RejectedExecutionException("Failed to start a new thread");
-        });
-        threadPoolTaskExecutor.setQueueCapacity(500);
-        threadPoolTaskExecutor.setThreadNamePrefix("MINE-POOL-");
-        threadPoolTaskExecutor.initialize();
-
-        Future<String> future = threadPoolTaskExecutor.submit(()->{
-            try {
-                System.out.println("打印开始");
-                Thread.sleep(10000L);
-                System.out.println("打印结束");
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            return "hello";
-        });
-
-        String val = null;
-        try {
-            val = future.get(3, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-        } catch (ExecutionException e) {
-        } catch (TimeoutException e) {
-        }
-        System.out.println(val);
-
-        try {
-            Thread.sleep(10000L);
-        } catch (InterruptedException e) {
-        }
-
-    }
-```
 
 ### 安全
 * 当前用户获取

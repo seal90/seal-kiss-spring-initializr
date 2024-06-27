@@ -1,5 +1,5 @@
 
-* 关闭版本
+* 关闭版本(非常重要)
 ```nginx
 server_tokens off;
 ```
