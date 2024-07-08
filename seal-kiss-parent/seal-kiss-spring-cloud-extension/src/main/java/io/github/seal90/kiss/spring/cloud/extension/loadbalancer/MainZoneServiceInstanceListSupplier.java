@@ -21,38 +21,38 @@ public class MainZoneServiceInstanceListSupplier extends DelegatingServiceInstan
 
     private final String mainEnv;
 
-    private final String subSetEnvRequestKey;
+    private final String subsetEnvRequestKey;
 
-    public MainZoneServiceInstanceListSupplier(ServiceInstanceListSupplier delegate, String mainEnv, String subSetEnvRequestKey) {
+    public MainZoneServiceInstanceListSupplier(ServiceInstanceListSupplier delegate, String mainEnv, String subsetEnvRequestKey) {
         super(delegate);
         this.mainEnv = mainEnv;
-        this.subSetEnvRequestKey = subSetEnvRequestKey;
+        this.subsetEnvRequestKey = subsetEnvRequestKey;
     }
 
     @Override
     public Flux<List<ServiceInstance>> get(Request request) {
-        String subSetEnvFlag = null;
+        String subsetEnvFlag = null;
         Object context = request.getContext();
         if ((context instanceof RequestDataContext)) {
             HttpHeaders headers = ((RequestDataContext) context).getClientRequest().getHeaders();
-            String headerGrayFlag = headers.getFirst(subSetEnvRequestKey);
+            String headerGrayFlag = headers.getFirst(subsetEnvRequestKey);
             if(StringUtils.hasText(headerGrayFlag)) {
-                subSetEnvFlag = headerGrayFlag;
+                subsetEnvFlag = headerGrayFlag;
             }
         }
 
-        String finalSubSetEnvFlag = subSetEnvFlag;
+        String finalSubsetEnvFlag = subsetEnvFlag;
         Flux<List<ServiceInstance>> instances = super.getDelegate().get(request);
-        if(StringUtils.hasText(finalSubSetEnvFlag)) {
+        if(StringUtils.hasText(finalSubsetEnvFlag)) {
             return instances.map(instanceList -> instanceList.stream().filter(
-                    instance -> finalSubSetEnvFlag.equals(instance.getMetadata().get(AppConstant.MAIN_ZONE_ENV)))
+                    instance -> finalSubsetEnvFlag.equals(instance.getMetadata().get(AppConstant.MAIN_ZONE)))
                             .collect(Collectors.toList())).filter(instanceList -> !instanceList.isEmpty())
                     .switchIfEmpty(instances.map(instanceList -> instanceList.stream().filter(
-                            instance -> mainEnv.equals(instance.getMetadata().get(AppConstant.MAIN_ZONE_ENV)))
+                            instance -> mainEnv.equals(instance.getMetadata().get(AppConstant.MAIN_ZONE)))
                             .collect(Collectors.toList())));
         }
         return instances.map(instanceList -> instanceList.stream().filter(
-                instance -> mainEnv.equals(instance.getMetadata().get(AppConstant.MAIN_ZONE_ENV)))
+                instance -> mainEnv.equals(instance.getMetadata().get(AppConstant.MAIN_ZONE)))
                 .collect(Collectors.toList()));
     }
 

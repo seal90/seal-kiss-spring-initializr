@@ -141,7 +141,7 @@ TODO 考虑将feign 挪到此包下
 
 两个环境标识：主环境标识，用于区分多个不同主环境；子环境标识，用于本主环境下灰度服务选择。
 
-在注册服务时，两个标识默认都为空，需要配置 seal.kiss.env.main seal.kiss.env.subSet 环境变量
+在注册服务时，两个标识默认都为空，需要配置 seal.kiss.env.main seal.kiss.env.subset 环境变量
 
 在调用时，主环境标识，默认 DAILY； 子环境标识，默认无
 
@@ -154,7 +154,7 @@ spring:
   config:
     import:
       - optional:nacos:${spring.application.name}.yml
-      - optional:nacos:${spring.application.name}-${seal.kiss.env.subSet:}.yml
+      - optional:nacos:${spring.application.name}-${seal.kiss.env.subset:}.yml
 ```
 
 ### 日志详述

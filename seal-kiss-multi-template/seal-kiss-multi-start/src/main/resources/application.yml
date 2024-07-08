@@ -18,8 +18,8 @@ spring:
         metadata:
           # Don't modify it
           # 不要修改它
-          main-zone-env: ${seal.kiss.env.main:DAILY}
-          sub-set-zone-env: ${seal.kiss.env.subSet:}
+          main-zone: ${seal.kiss.env.main:DAILY}
+          subset-zone: ${seal.kiss.env.subset:}
         server-addr: 127.0.0.1:8848
       config:
         server-addr: 127.0.0.1:8848
@@ -27,7 +27,7 @@ spring:
   config:
     import:
       - optional:nacos:${spring.application.name}.yml
-      - optional:nacos:${spring.application.name}-${seal.kiss.env.gray:}.yml
+      - optional:nacos:${spring.application.name}-${seal.kiss.env.subset:}.yml
 
 # mybatis config
 mybatis:

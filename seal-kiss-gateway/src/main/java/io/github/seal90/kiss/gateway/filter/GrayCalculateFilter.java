@@ -36,7 +36,7 @@ public class GrayCalculateFilter implements GlobalFilter, Ordered {
             mutateFlag = true;
             request = request.mutate().headers(toRemoveHeaders -> {
                 toRemoveHeaders.remove(SEAL_GRAY_PATH_FLAG);
-                toRemoveHeaders.remove(grayConfigurationProperties.getSubSetEnvRequestKey());
+                toRemoveHeaders.remove(grayConfigurationProperties.getSubsetEnvRequestKey());
             }).build();
         }
 
@@ -70,7 +70,7 @@ public class GrayCalculateFilter implements GlobalFilter, Ordered {
                     request = request.mutate().header(SEAL_GRAY_PATH_FLAG, rule.getTargetGrayFlag()).build();
                 } else if (GrayConfigurationProperties.GrayModifyType.GRAY_ENV == rule.getModifyType()) {
                     mutateFlag = true;
-                    request = request.mutate().header(grayConfigurationProperties.getSubSetEnvRequestKey(), rule.getTargetGrayFlag()).build();
+                    request = request.mutate().header(grayConfigurationProperties.getSubsetEnvRequestKey(), rule.getTargetGrayFlag()).build();
                 }
             }
         }

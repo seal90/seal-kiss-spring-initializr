@@ -19,7 +19,7 @@ public class GrayConfigurationProperties {
 
     public static final String SEAL_GRAY_PATH_FLAG = "SEAL-GRAY-PATH";
 
-    private String subSetEnvRequestKey = "SUB_SET_ENV";
+    private String subsetEnvRequestKey = "SUBSET_ENV";
 
     private Boolean enableClientRequestGrayHeader = true;
 

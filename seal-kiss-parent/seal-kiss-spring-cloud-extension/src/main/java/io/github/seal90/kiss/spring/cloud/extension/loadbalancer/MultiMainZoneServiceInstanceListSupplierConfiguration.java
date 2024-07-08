@@ -16,15 +16,15 @@ public class MultiMainZoneServiceInstanceListSupplierConfiguration {
     @Value("${seal.kiss.env.main:DAILY}")
     private String mainEnv;
 
-    @Value("${seal.kiss.gray.subSetEnvRequestKey:SUB_SET_ENV}")
-    private String subSetEnvRequestKey;
+    @Value("${seal.kiss.gray.subsetEnvRequestKey:SUBSET_ENV}")
+    private String subsetEnvRequestKey;
 
     @Bean
     @ConditionalOnBean(ReactiveDiscoveryClient.class)
     @ConditionalOnMissingBean
     public ServiceInstanceListSupplier multiMainZoneServiceInstanceListSupplier(ConfigurableApplicationContext context) {
         ServiceInstanceListSupplier delegate = ServiceInstanceListSupplier.builder().withDiscoveryClient().withCaching().build(context);
-        return new MultiMainZoneServiceInstanceListSupplier(delegate, mainEnv, subSetEnvRequestKey);
+        return new MultiMainZoneServiceInstanceListSupplier(delegate, mainEnv, subsetEnvRequestKey);
     }
 
     @Bean
@@ -33,7 +33,7 @@ public class MultiMainZoneServiceInstanceListSupplierConfiguration {
     public ServiceInstanceListSupplier blockingMultiMainZoneServiceInstanceListSupplier(
             ConfigurableApplicationContext context) {
         ServiceInstanceListSupplier delegate = ServiceInstanceListSupplier.builder().withBlockingDiscoveryClient().withCaching().build(context);
-        return new MultiMainZoneServiceInstanceListSupplier(delegate, mainEnv, subSetEnvRequestKey);
+        return new MultiMainZoneServiceInstanceListSupplier(delegate, mainEnv, subsetEnvRequestKey);
     }
 
 }

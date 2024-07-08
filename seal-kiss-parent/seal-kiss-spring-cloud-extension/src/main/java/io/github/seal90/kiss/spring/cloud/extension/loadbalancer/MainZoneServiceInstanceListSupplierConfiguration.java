@@ -10,14 +10,14 @@ public class MainZoneServiceInstanceListSupplierConfiguration {
     @Value("${seal.kiss.env.main:DAILY}")
     private String mainEnv;
 
-    @Value("${seal.kiss.env.request.header:SUB_SET_ENV}")
-    private String subSetEnvRequestKey;
+    @Value("${seal.kiss.gray.subsetEnvRequestKey:SUBSET_ENV}")
+    private String subsetEnvRequestKey;
 
     @Bean
     public ServiceInstanceListSupplier discoveryClientServiceInstanceListSupplier(
             ConfigurableApplicationContext context) {
         ServiceInstanceListSupplier delegate = ServiceInstanceListSupplier.builder().withDiscoveryClient().withCaching().build(context);
-        return new MainZoneServiceInstanceListSupplier(delegate, mainEnv, subSetEnvRequestKey);
+        return new MainZoneServiceInstanceListSupplier(delegate, mainEnv, subsetEnvRequestKey);
     }
 
 }

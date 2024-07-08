@@ -45,8 +45,8 @@ public class SealSpringMvcContractConfig {
 
 	private static final Log LOG = LogFactory.getLog(SealSpringMvcContract.class);
 
-	@Value("${seal.kiss.gray.subSetEnvRequestKey:SUB_SET_ENV}")
-	private String subSetEnvRequestKey;
+	@Value("${seal.kiss.gray.subsetEnvRequestKey:SUBSET_ENV}")
+	private String subsetEnvRequestKey;
 
 	@Autowired(required = false)
 	private FeignClientProperties feignClientProperties;
@@ -62,9 +62,9 @@ public class SealSpringMvcContractConfig {
 				RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
 				if(attributes instanceof ServletRequestAttributes servletRequestAttributes) {
 					HttpServletRequest request = servletRequestAttributes.getRequest();
-					String grayFlag = request.getHeader(subSetEnvRequestKey);
+					String grayFlag = request.getHeader(subsetEnvRequestKey);
 					if(StringUtils.hasText(grayFlag)) {
-						template.header(subSetEnvRequestKey, grayFlag);
+						template.header(subsetEnvRequestKey, grayFlag);
 					}
 				}
 			}
