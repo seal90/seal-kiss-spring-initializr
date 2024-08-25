@@ -8,27 +8,19 @@
 		<version>${revision}</version>
 	</parent>
 	<groupId>io.github.seal90</groupId>
-	<artifactId>seal-kiss-feign-plugin</artifactId>
+	<artifactId>seal-kiss-spring-extension</artifactId>
 	<version>${revision}</version>
-	<name>seal-kiss-feign-plugin</name>
+	<name>seal-kiss-spring-extension</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
 	</properties>
 	<dependencies>
 		<dependency>
-			<groupId>io.github.seal90</groupId>
-			<artifactId>seal-kiss-spring-extension</artifactId>
-			<version>${revision}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-openfeign</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
 			<scope>provided</scope>
 		</dependency>
+
 	</dependencies>
 
 	<build>

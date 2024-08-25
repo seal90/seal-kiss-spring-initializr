@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.seal90.kiss.feign.plugin.scanner.classreading;
+package org.springframework.core.type.classreading;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -23,20 +23,21 @@ import java.util.Set;
 import org.springframework.asm.Opcodes;
 import org.springframework.core.annotation.MergedAnnotations;
 import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.core.type.FieldMetadataExtension;
 import org.springframework.core.type.MethodMetadata;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 
 /**
  * {@link AnnotationMetadata} created from a
- * {@link SimpleAnnotationMetadataReadingVisitor}.
+ * {@link SimpleAnnotationMetadataReadingVisitorExtension}.
  *
  * @author Phillip Webb
  * @author Sam Brannen
  * @author Juergen Hoeller
  * @since 5.2
  */
-final class SimpleAnnotationMetadata implements AnnotationMetadata {
+final class SimpleAnnotationMetadataExtension implements AnnotationMetadata {
 
 	private final String className;
 
@@ -56,15 +57,17 @@ final class SimpleAnnotationMetadata implements AnnotationMetadata {
 
 	private final Set<MethodMetadata> declaredMethods;
 
+	private final Set<FieldMetadataExtension> declaredFields;
+
 	private final MergedAnnotations mergedAnnotations;
 
 	@Nullable
 	private Set<String> annotationTypes;
 
 
-	SimpleAnnotationMetadata(String className, int access, @Nullable String enclosingClassName,
-			@Nullable String superClassName, boolean independentInnerClass, Set<String> interfaceNames,
-			Set<String> memberClassNames, Set<MethodMetadata> declaredMethods, MergedAnnotations mergedAnnotations) {
+	SimpleAnnotationMetadataExtension(String className, int access, @Nullable String enclosingClassName,
+									  @Nullable String superClassName, boolean independentInnerClass, Set<String> interfaceNames,
+									  Set<String> memberClassNames, Set<MethodMetadata> declaredMethods, Set<FieldMetadataExtension> declaredFields, MergedAnnotations mergedAnnotations) {
 
 		this.className = className;
 		this.access = access;
@@ -74,12 +77,29 @@ final class SimpleAnnotationMetadata implements AnnotationMetadata {
 		this.interfaceNames = interfaceNames;
 		this.memberClassNames = memberClassNames;
 		this.declaredMethods = declaredMethods;
+		this.declaredFields = declaredFields;
 		this.mergedAnnotations = mergedAnnotations;
 	}
 
 	@Override
 	public String getClassName() {
 		return this.className;
+	}
+
+	public int getAccess() {
+		return access;
+	}
+
+	public boolean isIndependentInnerClass() {
+		return independentInnerClass;
+	}
+
+	public Set<FieldMetadataExtension> getDeclaredFields() {
+		return declaredFields;
+	}
+
+	public MergedAnnotations getMergedAnnotations() {
+		return mergedAnnotations;
 	}
 
 	@Override
@@ -164,7 +184,7 @@ final class SimpleAnnotationMetadata implements AnnotationMetadata {
 
 	@Override
 	public boolean equals(@Nullable Object other) {
-		return (this == other || (other instanceof SimpleAnnotationMetadata that && this.className.equals(that.className)));
+		return (this == other || (other instanceof SimpleAnnotationMetadataExtension that && this.className.equals(that.className)));
 	}
 
 	@Override

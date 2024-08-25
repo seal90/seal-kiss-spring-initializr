@@ -2,6 +2,7 @@ package com.github.seal90.kiss.multi.integration.config;
 
 import com.github.seal90.kiss.multi.client.helloWorld.HelloWorldClient;
 import io.github.seal90.kiss.feign.plugin.FeignConsumer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
@@ -9,6 +10,9 @@ public class ClientConfig {
 
     @FeignConsumer(name = "seal-kiss-multi")
     private HelloWorldClient helloWorldClientFacade;
+
+    @Value("${spring.application.name}")
+    private String name;
 
 //    @FeignConsumer(name = "seal-kiss-multi", url = "http://localhost:8080")
 //    private HelloWorldClient helloWorldClientFacade;

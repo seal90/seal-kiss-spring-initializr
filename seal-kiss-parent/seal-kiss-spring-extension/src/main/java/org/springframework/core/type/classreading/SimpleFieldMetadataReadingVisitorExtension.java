@@ -14,29 +14,23 @@
  * limitations under the License.
  */
 
-package io.github.seal90.kiss.feign.plugin.scanner.classreading;
+package org.springframework.core.type.classreading;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.springframework.asm.AnnotationVisitor;
-import org.springframework.asm.MethodVisitor;
-import org.springframework.asm.SpringAsmInfo;
-import org.springframework.asm.Type;
+import org.springframework.asm.*;
 import org.springframework.core.annotation.MergedAnnotation;
 import org.springframework.core.annotation.MergedAnnotations;
 import org.springframework.lang.Nullable;
 
 /**
- * ASM method visitor that creates {@link SimpleMethodMetadata}.
+ * ASM field visitor that creates {@link SimpleFieldMetadataExtension}.
  *
- * @author Phillip Webb
- * @author Sam Brannen
- * @author Juergen Hoeller
- * @since 5.2
+ * @author seal
  */
-final class SimpleMethodMetadataReadingVisitor extends MethodVisitor {
+final class SimpleFieldMetadataReadingVisitorExtension extends FieldVisitor {
 
 	@Nullable
 	private final ClassLoader classLoader;
@@ -45,26 +39,26 @@ final class SimpleMethodMetadataReadingVisitor extends MethodVisitor {
 
 	private final int access;
 
-	private final String methodName;
+	private final String fieldName;
 
 	private final String descriptor;
 
 	private final List<MergedAnnotation<?>> annotations = new ArrayList<>(4);
 
-	private final Consumer<SimpleMethodMetadata> consumer;
+	private final Consumer<SimpleFieldMetadataExtension> consumer;
 
 	@Nullable
 	private Source source;
 
 
-	SimpleMethodMetadataReadingVisitor(@Nullable ClassLoader classLoader, String declaringClassName,
-			int access, String methodName, String descriptor, Consumer<SimpleMethodMetadata> consumer) {
+	SimpleFieldMetadataReadingVisitorExtension(@Nullable ClassLoader classLoader, String declaringClassName,
+											   int access, String fieldName, String descriptor, Consumer<SimpleFieldMetadataExtension> consumer) {
 
 		super(SpringAsmInfo.ASM_VERSION);
 		this.classLoader = classLoader;
 		this.declaringClassName = declaringClassName;
 		this.access = access;
-		this.methodName = methodName;
+		this.fieldName = fieldName;
 		this.descriptor = descriptor;
 		this.consumer = consumer;
 	}
@@ -79,9 +73,9 @@ final class SimpleMethodMetadataReadingVisitor extends MethodVisitor {
 
 	@Override
 	public void visitEnd() {
-		String returnTypeName = Type.getReturnType(this.descriptor).getClassName();
+		String returnTypeName = Type.getType(this.descriptor).getClassName();
 		MergedAnnotations annotations = MergedAnnotations.of(this.annotations);
-		SimpleMethodMetadata metadata = new SimpleMethodMetadata(this.methodName, this.access,
+		SimpleFieldMetadataExtension metadata = new SimpleFieldMetadataExtension(this.fieldName, this.access,
 				this.declaringClassName, returnTypeName, getSource(), annotations);
 		this.consumer.accept(metadata);
 	}
@@ -89,7 +83,7 @@ final class SimpleMethodMetadataReadingVisitor extends MethodVisitor {
 	private Object getSource() {
 		Source source = this.source;
 		if (source == null) {
-			source = new Source(this.declaringClassName, this.methodName, this.descriptor);
+			source = new Source(this.declaringClassName, this.fieldName, this.descriptor);
 			this.source = source;
 		}
 		return source;
@@ -103,16 +97,16 @@ final class SimpleMethodMetadataReadingVisitor extends MethodVisitor {
 
 		private final String declaringClassName;
 
-		private final String methodName;
+		private final String fieldName;
 
 		private final String descriptor;
 
 		@Nullable
 		private String toStringValue;
 
-		Source(String declaringClassName, String methodName, String descriptor) {
+		Source(String declaringClassName, String fieldName, String descriptor) {
 			this.declaringClassName = declaringClassName;
-			this.methodName = methodName;
+			this.fieldName = fieldName;
 			this.descriptor = descriptor;
 		}
 
@@ -120,7 +114,7 @@ final class SimpleMethodMetadataReadingVisitor extends MethodVisitor {
 		public int hashCode() {
 			int result = 1;
 			result = 31 * result + this.declaringClassName.hashCode();
-			result = 31 * result + this.methodName.hashCode();
+			result = 31 * result + this.fieldName.hashCode();
 			result = 31 * result + this.descriptor.hashCode();
 			return result;
 		}
@@ -135,7 +129,7 @@ final class SimpleMethodMetadataReadingVisitor extends MethodVisitor {
 			}
 			Source otherSource = (Source) other;
 			return (this.declaringClassName.equals(otherSource.declaringClassName) &&
-					this.methodName.equals(otherSource.methodName) && this.descriptor.equals(otherSource.descriptor));
+					this.fieldName.equals(otherSource.fieldName) && this.descriptor.equals(otherSource.descriptor));
 		}
 
 		@Override
@@ -145,7 +139,7 @@ final class SimpleMethodMetadataReadingVisitor extends MethodVisitor {
 				StringBuilder builder = new StringBuilder();
 				builder.append(this.declaringClassName);
 				builder.append('.');
-				builder.append(this.methodName);
+				builder.append(this.fieldName);
 				Type[] argumentTypes = Type.getArgumentTypes(this.descriptor);
 				builder.append('(');
 				for (int i = 0; i < argumentTypes.length; i++) {

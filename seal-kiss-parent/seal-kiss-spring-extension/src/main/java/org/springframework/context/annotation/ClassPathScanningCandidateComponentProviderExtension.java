@@ -14,23 +14,20 @@
  * limitations under the License.
  */
 
-package io.github.seal90.kiss.feign.plugin.scanner;
+package org.springframework.context.annotation;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
-import io.github.seal90.kiss.feign.plugin.FeignConsumer;
-import io.github.seal90.kiss.feign.plugin.scanner.classreading.SimpleFieldAnnotationMetadata;
-import io.github.seal90.kiss.feign.plugin.scanner.classreading.SimpleFieldMetadata;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.springframework.asm.ClassReader;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.annotation.Lookup;
@@ -41,21 +38,17 @@ import org.springframework.context.index.CandidateComponentsIndex;
 import org.springframework.context.index.CandidateComponentsIndexLoader;
 import org.springframework.core.SpringProperties;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.core.annotation.MergedAnnotation;
 import org.springframework.core.annotation.MergedAnnotations;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.EnvironmentCapable;
 import org.springframework.core.env.StandardEnvironment;
-import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternUtils;
-import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.core.type.AnnotationMetadata;
-import io.github.seal90.kiss.feign.plugin.scanner.classreading.CachingMetadataReaderFactory;
-import io.github.seal90.kiss.feign.plugin.scanner.classreading.SimpleAnnotationMetadataReadingVisitor;
+import org.springframework.core.type.FieldMetadataExtension;
 import org.springframework.core.type.classreading.*;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.core.type.filter.AssignableTypeFilter;
@@ -81,7 +74,7 @@ import org.springframework.util.ClassUtils;
  * classpath scanning is used instead.
  *
  * <p>This implementation is based on Spring's
- * {@link org.springframework.core.type.classreading.MetadataReader MetadataReader}
+ * {@link MetadataReader MetadataReader}
  * facility, backed by an ASM {@link org.springframework.asm.ClassReader ClassReader}.
  *
  * @author Mark Fisher
@@ -97,7 +90,7 @@ import org.springframework.util.ClassUtils;
  * @see CandidateComponentsIndex
  */
 @SuppressWarnings("removal") // components index
-public class ClassPathScanningFieldCandidateComponentProvider implements EnvironmentCapable, ResourceLoaderAware {
+public class ClassPathScanningCandidateComponentProviderExtension implements EnvironmentCapable, ResourceLoaderAware {
 
 	static final String DEFAULT_RESOURCE_PATTERN = "**/*.class";
 
@@ -122,6 +115,10 @@ public class ClassPathScanningFieldCandidateComponentProvider implements Environ
 
 	private final List<TypeFilter> excludeFilters = new ArrayList<>();
 
+	private final List<TypeFilter> includeFieldFilters = new ArrayList<>();
+
+	private final List<TypeFilter> excludeFieldFilters = new ArrayList<>();
+
 	@Nullable
 	private Environment environment;
 
@@ -135,15 +132,17 @@ public class ClassPathScanningFieldCandidateComponentProvider implements Environ
 	private MetadataReaderFactory metadataReaderFactory;
 
 	@Nullable
+	private MetadataReaderFactoryExtension metadataReaderFactoryExtension;
+
+	@Nullable
 	private CandidateComponentsIndex componentsIndex;
 
-	private ResourceLoader resourceLoader;
 
 	/**
 	 * Protected constructor for flexible subclass initialization.
 	 * @since 4.3.6
 	 */
-	protected ClassPathScanningFieldCandidateComponentProvider() {
+	protected ClassPathScanningCandidateComponentProviderExtension() {
 	}
 
 	/**
@@ -154,7 +153,7 @@ public class ClassPathScanningFieldCandidateComponentProvider implements Environ
 	 * stereotype annotations
 	 * @see #registerDefaultFilters()
 	 */
-	public ClassPathScanningFieldCandidateComponentProvider(boolean useDefaultFilters) {
+	public ClassPathScanningCandidateComponentProviderExtension(boolean useDefaultFilters) {
 		this(useDefaultFilters, new StandardEnvironment());
 	}
 
@@ -167,7 +166,7 @@ public class ClassPathScanningFieldCandidateComponentProvider implements Environ
 	 * @param environment the Environment to use
 	 * @see #registerDefaultFilters()
 	 */
-	public ClassPathScanningFieldCandidateComponentProvider(boolean useDefaultFilters, Environment environment) {
+	public ClassPathScanningCandidateComponentProviderExtension(boolean useDefaultFilters, Environment environment) {
 		if (useDefaultFilters) {
 			registerDefaultFilters();
 		}
@@ -201,6 +200,14 @@ public class ClassPathScanningFieldCandidateComponentProvider implements Environ
 		this.excludeFilters.add(0, excludeFilter);
 	}
 
+	public void addIncludeFieldFilter(TypeFilter includeFilter) {
+		this.includeFieldFilters.add(includeFilter);
+	}
+
+	public void addExcludeFieldFilter(TypeFilter excludeFilter) {
+		this.excludeFieldFilters.add(0, excludeFilter);
+	}
+
 	/**
 	 * Reset the configured type filters.
 	 * @param useDefaultFilters whether to re-register the default filters for
@@ -212,6 +219,8 @@ public class ClassPathScanningFieldCandidateComponentProvider implements Environ
 	public void resetFilters(boolean useDefaultFilters) {
 		this.includeFilters.clear();
 		this.excludeFilters.clear();
+		this.includeFieldFilters.clear();
+		this.excludeFieldFilters.clear();
 		if (useDefaultFilters) {
 			registerDefaultFilters();
 		}
@@ -231,7 +240,7 @@ public class ClassPathScanningFieldCandidateComponentProvider implements Environ
 	@SuppressWarnings("unchecked")
 	protected void registerDefaultFilters() {
 		this.includeFilters.add(new AnnotationTypeFilter(Component.class));
-		ClassLoader cl = ClassPathScanningFieldCandidateComponentProvider.class.getClassLoader();
+		ClassLoader cl = ClassPathScanningCandidateComponentProviderExtension.class.getClassLoader();
 		try {
 			this.includeFilters.add(new AnnotationTypeFilter(
 					((Class<? extends Annotation>) ClassUtils.forName("jakarta.annotation.ManagedBean", cl)), false));
@@ -306,7 +315,6 @@ public class ClassPathScanningFieldCandidateComponentProvider implements Environ
 	public void setResourceLoader(@Nullable ResourceLoader resourceLoader) {
 		this.resourcePatternResolver = ResourcePatternUtils.getResourcePatternResolver(resourceLoader);
 		this.metadataReaderFactory = new CachingMetadataReaderFactory(resourceLoader);
-		this.resourceLoader = resourceLoader;
 		this.componentsIndex = CandidateComponentsIndexLoader.loadIndex(this.resourcePatternResolver.getClassLoader());
 	}
 
@@ -345,6 +353,110 @@ public class ClassPathScanningFieldCandidateComponentProvider implements Environ
 		return this.metadataReaderFactory;
 	}
 
+	/**
+	 * Return the MetadataReaderFactory used by this component provider.
+	 */
+	public final MetadataReaderFactoryExtension getMetadataReaderFactoryExtension() {
+		if (this.metadataReaderFactoryExtension == null) {
+			this.metadataReaderFactoryExtension = new CachingMetadataReaderFactoryExtension();
+		}
+		return this.metadataReaderFactoryExtension;
+	}
+
+	/**
+	 * Scan the component index or class path for candidate components.
+	 * @param basePackage the package to check for annotated field classes
+	 * @return a corresponding Set of autodetected bean definitions
+	 */
+	public Set<BeanDefinition> findFieldCandidateComponents(String basePackage) {
+		if (this.componentsIndex != null && indexSupportsIncludeFilters()) {
+//			return addCandidateComponentsFromIndex(this.componentsIndex, basePackage);
+			// todo for support
+			throw new RuntimeException("not support");
+		}
+		else {
+			return scanFieldCandidateComponents(basePackage);
+		}
+	}
+
+	private Set<BeanDefinition> scanFieldCandidateComponents(String basePackage) {
+		Set<BeanDefinition> candidates = new LinkedHashSet<>();
+		try {
+			String packageSearchPath = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX +
+					resolveBasePackage(basePackage) + '/' + this.resourcePattern;
+			Resource[] resources = getResourcePatternResolver().getResources(packageSearchPath);
+			boolean traceEnabled = logger.isTraceEnabled();
+			boolean debugEnabled = logger.isDebugEnabled();
+			for (Resource resource : resources) {
+				String filename = resource.getFilename();
+				if (filename != null && filename.contains(ClassUtils.CGLIB_CLASS_SEPARATOR)) {
+					// Ignore CGLIB-generated classes in the classpath
+					continue;
+				}
+				if (traceEnabled) {
+					logger.trace("Scanning " + resource);
+				}
+				try {
+					MetadataReaderExtension metadataReaderExtension = getMetadataReaderFactoryExtension().getMetadataReader(resource);
+
+					if (isCandidateComponent(metadataReaderExtension)) {
+						Set<FieldMetadataExtension> fieldMetadatas = metadataReaderExtension.getDeclaredFields();
+						for(FieldMetadataExtension fieldMetadata : fieldMetadatas) {
+							MergedAnnotations mergedAnnotations = fieldMetadata.getAnnotations();
+							MetadataReader metadataReader = getMetadataReaderFactoryExtension().getMetadataReader(fieldMetadata.getFieldTypeName(), mergedAnnotations);
+
+							if(!isCandidateFieldComponent(metadataReader)) {
+								continue;
+							}
+
+							ScannedGenericBeanDefinition sbd = new ScannedGenericBeanDefinition(metadataReader);
+							sbd.setSource(metadataReader.getResource());
+							if (isCandidateComponent(sbd)) {
+								if (debugEnabled) {
+									logger.debug("Identified candidate component class: " + resource);
+								}
+								candidates.add(sbd);
+							}
+							else {
+								if (debugEnabled) {
+									logger.debug("Ignored because not a concrete top-level class: " + resource);
+								}
+							}
+						}
+					}
+					else {
+						if (traceEnabled) {
+							logger.trace("Ignored because not matching any filter: " + resource);
+						}
+					}
+				}
+				catch (FileNotFoundException ex) {
+					if (traceEnabled) {
+						logger.trace("Ignored non-readable " + resource + ": " + ex.getMessage());
+					}
+				}
+				catch (ClassFormatException ex) {
+					if (shouldIgnoreClassFormatException) {
+						if (debugEnabled) {
+							logger.debug("Ignored incompatible class format in " + resource + ": " + ex.getMessage());
+						}
+					}
+					else {
+						throw new BeanDefinitionStoreException("Incompatible class format in " + resource +
+								": set system property 'spring.classformat.ignore' to 'true' " +
+								"if you mean to ignore such files during classpath scanning", ex);
+					}
+				}
+				catch (Throwable ex) {
+					throw new BeanDefinitionStoreException("Failed to read candidate component class: " + resource, ex);
+				}
+			}
+		}
+		catch (IOException ex) {
+			throw new BeanDefinitionStoreException("I/O failure during classpath scanning", ex);
+		}
+		return candidates;
+	}
 
 	/**
 	 * Scan the component index or class path for candidate components.
@@ -475,102 +587,44 @@ public class ClassPathScanningFieldCandidateComponentProvider implements Environ
 					logger.trace("Scanning " + resource);
 				}
 				try {
-					ResourceLoader resourceLoader = (this.resourceLoader != null ? this.resourceLoader : new DefaultResourceLoader());
-					ClassLoader classLoader = resourceLoader.getClassLoader();
-
-					try (InputStream is = resource.getInputStream()) {
-						try {
-							int PARSING_OPTIONS =
-									(ClassReader.SKIP_DEBUG | ClassReader.SKIP_CODE | ClassReader.SKIP_FRAMES);
-
-							SimpleAnnotationMetadataReadingVisitor visitor = new SimpleAnnotationMetadataReadingVisitor(classLoader);
-							ClassReader classReader = new ClassReader(is);
-							classReader.accept(visitor, PARSING_OPTIONS);
-							Set<SimpleFieldMetadata> metadatas = visitor.getDeclaredFields();
-							for (SimpleFieldMetadata metadata : metadatas) {
-								MergedAnnotations mergedAnnotations = metadata.getAnnotations();
-								MergedAnnotation<FeignConsumer> feignConsumer = mergedAnnotations.get(FeignConsumer.class);
-								if(feignConsumer.isPresent()) {
-									SimpleFieldAnnotationMetadata simpleFieldAnnotationMetadata = new SimpleFieldAnnotationMetadata(
-											metadata.getFieldTypeName(),
-											1,
-											metadata.getFieldTypeName(),
-											null,
-											false,
-											Collections.emptySet(),
-											Collections.emptySet(),
-											Collections.emptySet(),
-											mergedAnnotations
-									);
-									FeignConsumerBeanDefine beanDefine = new FeignConsumerBeanDefine(simpleFieldAnnotationMetadata);
-									candidates.add(beanDefine);
-								}
+					MetadataReader metadataReader = getMetadataReaderFactory().getMetadataReader(resource);
+					if (isCandidateComponent(metadataReader)) {
+						ScannedGenericBeanDefinition sbd = new ScannedGenericBeanDefinition(metadataReader);
+						sbd.setSource(resource);
+						if (isCandidateComponent(sbd)) {
+							if (debugEnabled) {
+								logger.debug("Identified candidate component class: " + resource);
 							}
-
+							candidates.add(sbd);
 						}
-						catch (IllegalArgumentException ex) {
-							throw new ClassFormatException("ASM ClassReader failed to parse class file - " +
-									"probably due to a new Java class file version that is not supported yet. " +
-									"Consider compiling with a lower '-target' or upgrade your framework version. " +
-									"Affected class: " + resource, ex);
+						else {
+							if (debugEnabled) {
+								logger.debug("Ignored because not a concrete top-level class: " + resource);
+							}
 						}
 					}
-
-
-
-
-//					Class<?> type = (Class<?>) ClassUtils.resolveClassName(filename, resourceLoader.getClassLoader());
-//					Field[] fields = type.getFields();
-//					for (Field field : fields) {
-//						Class<?> declaringClass = field.getDeclaringClass();
-//						FeignConsumer feignConsumer = field.getAnnotation(FeignConsumer.class);
-//						if(null != feignConsumer) {
-//							candidates.add(new FeignConsumerBeanDefine(field));
-//						}
-//					}
-
-
-//					BeanDefinition beanDefinition = new AnnotatedGenericBeanDefinition();
-
-//					MetadataReader metadataReader = getMetadataReaderFactory().getMetadataReader(resource);
-//					if (isCandidateComponent(metadataReader)) {
-//
-//						ScannedGenericBeanDefinition sbd = new ScannedGenericBeanDefinition(metadataReader);
-//						sbd.setSource(resource);
-//						if (isCandidateComponent(sbd)) {
-//							if (debugEnabled) {
-//								logger.debug("Identified candidate component class: " + resource);
-//							}
-//							candidates.add(sbd);
-//						}
-//						else {
-//							if (debugEnabled) {
-//								logger.debug("Ignored because not a concrete top-level class: " + resource);
-//							}
-//						}
-//					}
-//					else {
-//						if (traceEnabled) {
-//							logger.trace("Ignored because not matching any filter: " + resource);
-//						}
-//					}
-//				}
-//				catch (FileNotFoundException ex) {
-//					if (traceEnabled) {
-//						logger.trace("Ignored non-readable " + resource + ": " + ex.getMessage());
-//					}
-//				}
-//				catch (ClassFormatException ex) {
-//					if (shouldIgnoreClassFormatException) {
-//						if (debugEnabled) {
-//							logger.debug("Ignored incompatible class format in " + resource + ": " + ex.getMessage());
-//						}
-//					}
-//					else {
-//						throw new BeanDefinitionStoreException("Incompatible class format in " + resource +
-//								": set system property 'spring.classformat.ignore' to 'true' " +
-//								"if you mean to ignore such files during classpath scanning", ex);
-//					}
+					else {
+						if (traceEnabled) {
+							logger.trace("Ignored because not matching any filter: " + resource);
+						}
+					}
+				}
+				catch (FileNotFoundException ex) {
+					if (traceEnabled) {
+						logger.trace("Ignored non-readable " + resource + ": " + ex.getMessage());
+					}
+				}
+				catch (ClassFormatException ex) {
+					if (shouldIgnoreClassFormatException) {
+						if (debugEnabled) {
+							logger.debug("Ignored incompatible class format in " + resource + ": " + ex.getMessage());
+						}
+					}
+					else {
+						throw new BeanDefinitionStoreException("Incompatible class format in " + resource +
+								": set system property 'spring.classformat.ignore' to 'true' " +
+								"if you mean to ignore such files during classpath scanning", ex);
+					}
 				}
 				catch (Throwable ex) {
 					throw new BeanDefinitionStoreException("Failed to read candidate component class: " + resource, ex);
@@ -609,6 +663,20 @@ public class ClassPathScanningFieldCandidateComponentProvider implements Environ
 			}
 		}
 		for (TypeFilter tf : this.includeFilters) {
+			if (tf.match(metadataReader, getMetadataReaderFactory())) {
+				return isConditionMatch(metadataReader);
+			}
+		}
+		return false;
+	}
+
+	protected boolean isCandidateFieldComponent(MetadataReader metadataReader) throws IOException {
+		for (TypeFilter tf : this.excludeFieldFilters) {
+			if (tf.match(metadataReader, getMetadataReaderFactory())) {
+				return false;
+			}
+		}
+		for (TypeFilter tf : this.includeFieldFilters) {
 			if (tf.match(metadataReader, getMetadataReaderFactory())) {
 				return isConditionMatch(metadataReader);
 			}

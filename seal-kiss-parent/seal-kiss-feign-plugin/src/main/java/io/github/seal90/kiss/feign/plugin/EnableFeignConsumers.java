@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Import;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
-@Import({FeignConsumersRegistrar.class, SealSpringMvcContractConfig.class})
+@Import({FeignConsumersRegistrar.class, FeignConsumerSpringMvcContractConfig.class})
 public @interface EnableFeignConsumers {
 
 	/**

@@ -41,7 +41,7 @@ import static org.springframework.core.annotation.AnnotatedElementUtils.findMerg
  * @author Ram Anaswara
  * @author Sam Kruglov
  */
-public class SealSpringMvcContractConfig {
+public class FeignConsumerSpringMvcContractConfig {
 
 	private static final Log LOG = LogFactory.getLog(SealSpringMvcContract.class);
 

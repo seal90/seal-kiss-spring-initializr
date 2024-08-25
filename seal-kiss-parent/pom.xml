@@ -104,6 +104,7 @@
 		<module>seal-kiss-feign-plugin</module>
 		<module>seal-kiss-mybatis-generator-plugin</module>
 		<module>seal-kiss-spring-cloud-extension</module>
+		<module>seal-kiss-spring-extension</module>
 	</modules>
 
 	<build>

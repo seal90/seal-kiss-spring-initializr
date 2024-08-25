@@ -14,51 +14,49 @@
  * limitations under the License.
  */
 
-package io.github.seal90.kiss.feign.plugin.scanner.classreading;
+package org.springframework.core.type.classreading;
 
+import org.springframework.core.type.FieldMetadataExtension;
 import org.springframework.asm.Opcodes;
 import org.springframework.core.annotation.MergedAnnotations;
-import org.springframework.core.type.MethodMetadata;
 import org.springframework.lang.Nullable;
 
 /**
- * {@link MethodMetadata} created from a {@link SimpleMethodMetadataReadingVisitor}.
+ * {@link FieldMetadataExtension} created from a {@link SimpleFieldMetadataReadingVisitorExtension}.
  *
- * @author Phillip Webb
- * @author Sam Brannen
- * @since 5.2
+ * @author seal
  */
-final class SimpleMethodMetadata implements MethodMetadata {
+final class SimpleFieldMetadataExtension implements FieldMetadataExtension {
 
-	private final String methodName;
+	private final String fieldName;
 
 	private final int access;
 
 	private final String declaringClassName;
 
-	private final String returnTypeName;
+	private final String fieldTypeName;
 
-	// The source implements equals(), hashCode(), and toString() for the underlying method.
+	// The source implements equals(), hashCode(), and toString() for the underlying field.
 	private final Object source;
 
 	private final MergedAnnotations annotations;
 
 
-	SimpleMethodMetadata(String methodName, int access, String declaringClassName,
-			String returnTypeName, Object source, MergedAnnotations annotations) {
+	SimpleFieldMetadataExtension(String fieldName, int access, String declaringClassName,
+								 String fieldTypeName, Object source, MergedAnnotations annotations) {
 
-		this.methodName = methodName;
+		this.fieldName = fieldName;
 		this.access = access;
 		this.declaringClassName = declaringClassName;
-		this.returnTypeName = returnTypeName;
+		this.fieldTypeName = fieldTypeName;
 		this.source = source;
 		this.annotations = annotations;
 	}
 
 
 	@Override
-	public String getMethodName() {
-		return this.methodName;
+	public String getFieldName() {
+		return this.fieldName;
 	}
 
 	@Override
@@ -67,13 +65,8 @@ final class SimpleMethodMetadata implements MethodMetadata {
 	}
 
 	@Override
-	public String getReturnTypeName() {
-		return this.returnTypeName;
-	}
-
-	@Override
-	public boolean isAbstract() {
-		return (this.access & Opcodes.ACC_ABSTRACT) != 0;
+	public String getFieldTypeName() {
+		return this.fieldTypeName;
 	}
 
 	@Override
@@ -84,11 +77,6 @@ final class SimpleMethodMetadata implements MethodMetadata {
 	@Override
 	public boolean isFinal() {
 		return (this.access & Opcodes.ACC_FINAL) != 0;
-	}
-
-	@Override
-	public boolean isOverridable() {
-		return !isStatic() && !isFinal() && !isPrivate();
 	}
 
 	private boolean isPrivate() {
@@ -103,7 +91,7 @@ final class SimpleMethodMetadata implements MethodMetadata {
 
 	@Override
 	public boolean equals(@Nullable Object other) {
-		return (this == other || (other instanceof SimpleMethodMetadata that && this.source.equals(that.source)));
+		return (this == other || (other instanceof SimpleFieldMetadataExtension that && this.source.equals(that.source)));
 	}
 
 	@Override

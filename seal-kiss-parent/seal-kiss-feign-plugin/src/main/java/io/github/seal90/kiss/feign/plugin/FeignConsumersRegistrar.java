@@ -13,15 +13,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import feign.Contract;
 import feign.Request;
 
-import io.github.seal90.kiss.feign.plugin.scanner.ClassPathScanningFieldCandidateComponentProvider;
 import org.springframework.aop.scope.ScopedProxyUtils;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.annotation.AnnotatedGenericBeanDefinition;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.config.BeanExpressionContext;
@@ -32,15 +29,12 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.cloud.openfeign.*;
-import org.springframework.cloud.openfeign.support.SpringMvcContract;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.ResourceLoaderAware;
-import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProviderExtension;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.annotation.AnnotationAttributes;
-import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.AnnotationMetadata;
@@ -164,12 +158,13 @@ class FeignConsumersRegistrar implements ImportBeanDefinitionRegistrar, Resource
 		Map<String, Object> attrs = metadata.getAnnotationAttributes(EnableFeignConsumers.class.getName());
 		final Class<?>[] clients = attrs == null ? null : (Class<?>[]) attrs.get("clients");
 		if (clients == null || clients.length == 0) {
-			ClassPathScanningFieldCandidateComponentProvider scanner = getScanner();
+			ClassPathScanningCandidateComponentProviderExtension scanner = getScanner();
 			scanner.setResourceLoader(this.resourceLoader);
 			scanner.addIncludeFilter(new AnnotationTypeFilter(Configuration.class));
+			scanner.addIncludeFieldFilter(new AnnotationTypeFilter(FeignConsumer.class));
 			Set<String> basePackages = getBasePackages(metadata);
 			for (String basePackage : basePackages) {
-				candidateComponents.addAll(scanner.findCandidateComponents(basePackage));
+				candidateComponents.addAll(scanner.findFieldCandidateComponents(basePackage));
 			}
 		}
 		else {
@@ -400,8 +395,8 @@ class FeignConsumersRegistrar implements ImportBeanDefinitionRegistrar, Resource
 		return getPath(path);
 	}
 
-	protected ClassPathScanningFieldCandidateComponentProvider getScanner() {
-		return new ClassPathScanningFieldCandidateComponentProvider(false, this.environment) {
+	protected ClassPathScanningCandidateComponentProviderExtension getScanner() {
+		return new ClassPathScanningCandidateComponentProviderExtension(false, this.environment) {
 			@Override
 			protected boolean isCandidateComponent(AnnotatedBeanDefinition beanDefinition) {
 				boolean isCandidate = false;
@@ -487,12 +482,17 @@ class FeignConsumersRegistrar implements ImportBeanDefinitionRegistrar, Resource
 
 	private void registerClientConfiguration(BeanDefinitionRegistry registry, Object name, Object className,
 			Object configuration) {
-		BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(FeignConsumerSpecification.class);
+		boolean contains = registry.containsBeanDefinition(name + "." + FeignClientSpecification.class.getSimpleName());
+		if(contains) {
+			return;
+		}
+		BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(FeignClientSpecification.class);
 		builder.addConstructorArgValue(name);
 		builder.addConstructorArgValue(className);
 		builder.addConstructorArgValue(configuration);
-		registry.registerBeanDefinition(name + "." + FeignConsumerSpecification.class.getSimpleName(),
+		registry.registerBeanDefinition(name + "." + FeignClientSpecification.class.getSimpleName(),
 				builder.getBeanDefinition());
+
 	}
 
 	@Override

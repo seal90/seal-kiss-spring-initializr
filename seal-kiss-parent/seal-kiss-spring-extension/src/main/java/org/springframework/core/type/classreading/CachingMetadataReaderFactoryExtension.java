@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.seal90.kiss.feign.plugin.scanner.classreading;
+package org.springframework.core.type.classreading;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -24,7 +24,6 @@ import java.util.concurrent.ConcurrentMap;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.lang.Nullable;
 
 /**
@@ -36,21 +35,21 @@ import org.springframework.lang.Nullable;
  * @author Costin Leau
  * @since 2.5
  */
-public class CachingMetadataReaderFactory extends SimpleMetadataReaderFactory {
+public class CachingMetadataReaderFactoryExtension extends SimpleMetadataReaderFactoryExtension {
 
 	/** Default maximum number of entries for a local MetadataReader cache: 256. */
 	public static final int DEFAULT_CACHE_LIMIT = 256;
 
 	/** MetadataReader cache: either local or shared at the ResourceLoader level. */
 	@Nullable
-	private Map<Resource, MetadataReader> metadataReaderCache;
+	private Map<Resource, MetadataReaderExtension> metadataReaderCache;
 
 
 	/**
 	 * Create a new CachingMetadataReaderFactory for the default class loader,
 	 * using a local resource cache.
 	 */
-	public CachingMetadataReaderFactory() {
+	public CachingMetadataReaderFactoryExtension() {
 		super();
 		setCacheLimit(DEFAULT_CACHE_LIMIT);
 	}
@@ -60,7 +59,7 @@ public class CachingMetadataReaderFactory extends SimpleMetadataReaderFactory {
 	 * using a local resource cache.
 	 * @param classLoader the ClassLoader to use
 	 */
-	public CachingMetadataReaderFactory(@Nullable ClassLoader classLoader) {
+	public CachingMetadataReaderFactoryExtension(@Nullable ClassLoader classLoader) {
 		super(classLoader);
 		setCacheLimit(DEFAULT_CACHE_LIMIT);
 	}
@@ -72,10 +71,10 @@ public class CachingMetadataReaderFactory extends SimpleMetadataReaderFactory {
 	 * (also determines the ClassLoader to use)
 	 * @see DefaultResourceLoader#getResourceCache
 	 */
-	public CachingMetadataReaderFactory(@Nullable ResourceLoader resourceLoader) {
+	public CachingMetadataReaderFactoryExtension(@Nullable ResourceLoader resourceLoader) {
 		super(resourceLoader);
 		if (resourceLoader instanceof DefaultResourceLoader defaultResourceLoader) {
-			this.metadataReaderCache = defaultResourceLoader.getResourceCache(MetadataReader.class);
+			this.metadataReaderCache = defaultResourceLoader.getResourceCache(MetadataReaderExtension.class);
 		}
 		else {
 			setCacheLimit(DEFAULT_CACHE_LIMIT);
@@ -115,10 +114,10 @@ public class CachingMetadataReaderFactory extends SimpleMetadataReaderFactory {
 
 
 	@Override
-	public MetadataReader getMetadataReader(Resource resource) throws IOException {
+	public MetadataReaderExtension getMetadataReader(Resource resource) throws IOException {
 		if (this.metadataReaderCache instanceof ConcurrentMap) {
 			// No synchronization necessary...
-			MetadataReader metadataReader = this.metadataReaderCache.get(resource);
+			MetadataReaderExtension metadataReader = this.metadataReaderCache.get(resource);
 			if (metadataReader == null) {
 				metadataReader = super.getMetadataReader(resource);
 				this.metadataReaderCache.put(resource, metadataReader);
@@ -127,7 +126,7 @@ public class CachingMetadataReaderFactory extends SimpleMetadataReaderFactory {
 		}
 		else if (this.metadataReaderCache != null) {
 			synchronized (this.metadataReaderCache) {
-				MetadataReader metadataReader = this.metadataReaderCache.get(resource);
+				MetadataReaderExtension metadataReader = this.metadataReaderCache.get(resource);
 				if (metadataReader == null) {
 					metadataReader = super.getMetadataReader(resource);
 					this.metadataReaderCache.put(resource, metadataReader);
@@ -157,7 +156,7 @@ public class CachingMetadataReaderFactory extends SimpleMetadataReaderFactory {
 
 
 	@SuppressWarnings("serial")
-	private static class LocalResourceCache extends LinkedHashMap<Resource, MetadataReader> {
+	private static class LocalResourceCache extends LinkedHashMap<Resource, MetadataReaderExtension> {
 
 		private volatile int cacheLimit;
 
@@ -175,7 +174,7 @@ public class CachingMetadataReaderFactory extends SimpleMetadataReaderFactory {
 		}
 
 		@Override
-		protected boolean removeEldestEntry(Map.Entry<Resource, MetadataReader> eldest) {
+		protected boolean removeEldestEntry(Map.Entry<Resource, MetadataReaderExtension> eldest) {
 			return size() > this.cacheLimit;
 		}
 	}

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.github.seal90.kiss.feign.plugin.scanner.classreading;
+package org.springframework.core.type.classreading;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -22,20 +22,18 @@ import java.util.Set;
 import org.springframework.asm.*;
 import org.springframework.core.annotation.MergedAnnotation;
 import org.springframework.core.annotation.MergedAnnotations;
-import org.springframework.core.type.AnnotatedTypeMetadata;
+import org.springframework.core.type.FieldMetadataExtension;
 import org.springframework.core.type.MethodMetadata;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 
 /**
- * ASM class visitor that creates {@link SimpleAnnotationMetadata}.
+ * ASM class visitor that creates {@link SimpleAnnotationMetadataExtension}.
  *
- * @author Phillip Webb
- * @author Juergen Hoeller
- * @since 5.2
+ * @author seal
  */
-public final class SimpleAnnotationMetadataReadingVisitor extends ClassVisitor {
+final class SimpleAnnotationMetadataReadingVisitorExtension extends ClassVisitor {
 
 	@Nullable
 	private final ClassLoader classLoader;
@@ -60,16 +58,16 @@ public final class SimpleAnnotationMetadataReadingVisitor extends ClassVisitor {
 
 	private final Set<MethodMetadata> declaredMethods = new LinkedHashSet<>(4);
 
-	private final Set<SimpleFieldMetadata> declaredFields = new LinkedHashSet<>();
+	private final Set<FieldMetadataExtension> declaredFields = new LinkedHashSet<>(4);
 
 	@Nullable
-	private SimpleAnnotationMetadata metadata;
+	private SimpleAnnotationMetadataExtension metadata;
 
 	@Nullable
 	private Source source;
 
 
-	public SimpleAnnotationMetadataReadingVisitor(@Nullable ClassLoader classLoader) {
+	SimpleAnnotationMetadataReadingVisitorExtension(@Nullable ClassLoader classLoader) {
 		super(SpringAsmInfo.ASM_VERSION);
 		this.classLoader = classLoader;
 	}
@@ -132,35 +130,32 @@ public final class SimpleAnnotationMetadataReadingVisitor extends ClassVisitor {
 	@Override
 	@Nullable
 	public FieldVisitor visitField(
-			final int access,
-			final String name,
-			final String descriptor,
-			final String signature,
-			final Object value) {
+			int access, String name, String descriptor, String signature, Object value) {
 
-		// Skip bridge methods and constructors - we're only interested in original user methods.
-		if (isBridge(access)) {
-			return null;
-		}
-		return new SimpleFieldMetadataReadingVisitor(this.classLoader, this.className,
+		return new SimpleFieldMetadataReadingVisitorExtension(this.classLoader, this.className,
 				access, name, descriptor, this.declaredFields::add);
 	}
 
 	@Override
 	public void visitEnd() {
 		MergedAnnotations annotations = MergedAnnotations.of(this.annotations);
-		this.metadata = new SimpleAnnotationMetadata(this.className, this.access,
+		this.metadata = new SimpleAnnotationMetadataExtension(this.className, this.access,
 				this.enclosingClassName, this.superClassName, this.independentInnerClass,
-				this.interfaceNames, this.memberClassNames, this.declaredMethods, annotations);
+				this.interfaceNames, this.memberClassNames, this.declaredMethods,
+				this.declaredFields, annotations);
 	}
 
-	public SimpleAnnotationMetadata getMetadata() {
+	public SimpleAnnotationMetadataExtension getMetadata() {
 		Assert.state(this.metadata != null, "AnnotationMetadata not initialized");
 		return this.metadata;
 	}
 
-	public Set<SimpleFieldMetadata> getDeclaredFields() {
-		return this.declaredFields;
+	public Set<MethodMetadata> getDeclaredMethods() {
+		return declaredMethods;
+	}
+
+	public Set<FieldMetadataExtension> getDeclaredFields() {
+		return declaredFields;
 	}
 
 	private Source getSource() {
@@ -183,7 +178,6 @@ public final class SimpleAnnotationMetadataReadingVisitor extends ClassVisitor {
 	private boolean isInterface(int access) {
 		return (access & Opcodes.ACC_INTERFACE) != 0;
 	}
-
 
 	/**
 	 * {@link MergedAnnotation} source.
