@@ -1,13 +1,8 @@
-package io.github.seal90.kiss.feign.plugin;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package io.github.seal90.kiss.spring.cloud.extension.feign;
 
 import org.springframework.core.annotation.AliasFor;
+
+import java.lang.annotation.*;
 
 /**
  * Annotation for interfaces declaring that a REST client with that interface should be

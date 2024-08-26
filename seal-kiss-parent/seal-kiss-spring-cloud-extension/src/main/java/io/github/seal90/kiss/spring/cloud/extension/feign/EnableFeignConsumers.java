@@ -1,12 +1,8 @@
-package io.github.seal90.kiss.feign.plugin;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package io.github.seal90.kiss.spring.cloud.extension.feign;
 
 import org.springframework.context.annotation.Import;
+
+import java.lang.annotation.*;
 
 /**
  * Scans for interfaces that declare they are feign clients (via

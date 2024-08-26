@@ -3,7 +3,7 @@ package {{MAVEN_PACKAGE_NAME}};
 import io.github.seal90.kiss.core.config.ExceptionAdviceConfig;
 import io.github.seal90.kiss.core.config.ExceptionGlobalConfig;
 import io.github.seal90.kiss.core.config.LogConfig;
-import io.github.seal90.kiss.feign.plugin.EnableFeignConsumers;
+import io.github.seal90.kiss.spring.cloud.extension.feign.EnableFeignConsumers;
 import io.github.seal90.kiss.spring.cloud.extension.loadbalancer.MultiMainZoneServiceInstanceListSupplierConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

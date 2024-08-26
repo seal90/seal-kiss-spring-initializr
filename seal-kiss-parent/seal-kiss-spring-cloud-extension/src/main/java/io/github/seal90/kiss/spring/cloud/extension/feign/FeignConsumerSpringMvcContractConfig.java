@@ -1,15 +1,10 @@
-package io.github.seal90.kiss.feign.plugin;
+package io.github.seal90.kiss.spring.cloud.extension.feign;
 
 import feign.Contract;
 import feign.MethodMetadata;
-
-import feign.RequestInterceptor;
-import feign.RequestTemplate;
-import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cloud.openfeign.AnnotatedParameterProcessor;
 import org.springframework.cloud.openfeign.CollectionFormat;
@@ -18,11 +13,7 @@ import org.springframework.cloud.openfeign.FeignClientProperties;
 import org.springframework.cloud.openfeign.support.SpringMvcContract;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,10 +34,7 @@ import static org.springframework.core.annotation.AnnotatedElementUtils.findMerg
  */
 public class FeignConsumerSpringMvcContractConfig {
 
-	private static final Log LOG = LogFactory.getLog(SealSpringMvcContract.class);
-
-	@Value("${seal.kiss.gray.subsetEnvRequestKey:SUBSET_ENV}")
-	private String subsetEnvRequestKey;
+	private static final Log LOG = LogFactory.getLog(FeignConsumerSpringMvcContract.class);
 
 	@Autowired(required = false)
 	private FeignClientProperties feignClientProperties;
@@ -55,31 +43,14 @@ public class FeignConsumerSpringMvcContractConfig {
 	private List<AnnotatedParameterProcessor> parameterProcessors = new ArrayList<>();
 
 	@Bean
-	public RequestInterceptor headerRequestInterceptor() {
-		return new RequestInterceptor() {
-			@Override
-			public void apply(RequestTemplate template) {
-				RequestAttributes attributes = RequestContextHolder.getRequestAttributes();
-				if(attributes instanceof ServletRequestAttributes servletRequestAttributes) {
-					HttpServletRequest request = servletRequestAttributes.getRequest();
-					String grayFlag = request.getHeader(subsetEnvRequestKey);
-					if(StringUtils.hasText(grayFlag)) {
-						template.header(subsetEnvRequestKey, grayFlag);
-					}
-				}
-			}
-		};
-	}
-
-	@Bean
-	@ConditionalOnProperty(name = "io.github.seal90.feign.mvc.contract", havingValue = "true", matchIfMissing=true)
+	@ConditionalOnProperty(name = "io.github.seal90.spring.cloud.extension.feign.mvc.contract", havingValue = "true", matchIfMissing=true)
 	public Contract feignContract(ConversionService feignConversionService) {
 		boolean decodeSlash = feignClientProperties == null || feignClientProperties.isDecodeSlash();
-		return new SealSpringMvcContract(parameterProcessors, feignConversionService, decodeSlash);
+		return new FeignConsumerSpringMvcContract(parameterProcessors, feignConversionService, decodeSlash);
 	}
 
-	private static final class SealSpringMvcContract extends SpringMvcContract {
-		public SealSpringMvcContract(List<AnnotatedParameterProcessor> annotatedParameterProcessors,
+	private static final class FeignConsumerSpringMvcContract extends SpringMvcContract {
+		public FeignConsumerSpringMvcContract(List<AnnotatedParameterProcessor> annotatedParameterProcessors,
 								 ConversionService conversionService, boolean decodeSlash) {
 			super(annotatedParameterProcessors, conversionService, decodeSlash);
 		}

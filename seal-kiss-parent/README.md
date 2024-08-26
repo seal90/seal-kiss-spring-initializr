@@ -96,14 +96,16 @@ start
 
 常用请求信息获取 [RequestUtils.java](seal-kiss-core%2Fsrc%2Fmain%2Fjava%2Fio%2Fgithub%2Fseal90%2Fkiss%2Fcore%2Futils%2FRequestUtils.java)
 
-### feign 扩展 [seal-kiss-feign-plugin](seal-kiss-feign-plugin)
+### [seal-kiss-spring-cloud-extension](seal-kiss-spring-cloud-extension) spring cloud 的能力延伸
+
+#### feign 扩展 [feign](seal-kiss-spring-cloud-extension%2Fsrc%2Fmain%2Fjava%2Fio%2Fgithub%2Fseal90%2Fkiss%2Fspring%2Fcloud%2Fextension%2Ffeign)
 配合程序提供的二方包能力，将二方包接口注册为实例
 
 实现与 spring 提供的能力对应
-* 开启 @EnableFeignClients [EnableFeignConsumers.java](seal-kiss-feign-plugin%2Fsrc%2Fmain%2Fjava%2Fio%2Fgithub%2Fseal90%2Fkiss%2Ffeign%2Fplugin%2FEnableFeignConsumers.java)
-* 配置 @FeignClient [FeignConsumer.java](seal-kiss-feign-plugin%2Fsrc%2Fmain%2Fjava%2Fio%2Fgithub%2Fseal90%2Fkiss%2Ffeign%2Fplugin%2FFeignConsumer.java)
+* 开启 @EnableFeignClients [EnableFeignConsumers.java](seal-kiss-spring-cloud-extension%2Fsrc%2Fmain%2Fjava%2Fio%2Fgithub%2Fseal90%2Fkiss%2Fspring%2Fcloud%2Fextension%2Ffeign%2FEnableFeignConsumers.java)
+* 配置 @FeignClient [FeignConsumer.java](seal-kiss-spring-cloud-extension%2Fsrc%2Fmain%2Fjava%2Fio%2Fgithub%2Fseal90%2Fkiss%2Fspring%2Fcloud%2Fextension%2Ffeign%2FFeignConsumer.java)
 
-实现中当前版本 判断 handler，无须修改 RequestMappingHandlerMapping
+前期版本中会判断从feign加载的类不能使用 @RestMapping 等注解，实现中当前版本 判断 handler，无须修改 RequestMappingHandlerMapping
 ```java
 /**
  * {@inheritDoc}
@@ -115,7 +117,7 @@ protected boolean isHandler(Class<?> beanType) {
 }
 ```
 
-Feign 不允许注册 @RequestMapping 修改 SpringMvcContract
+Feign 不允许注册 @RequestMapping 需修改 SpringMvcContract
 ```java
 		@Override
 		protected void processAnnotationOnClass(MethodMetadata data, Class<?> clz) {
@@ -134,18 +136,18 @@ Feign 不允许注册 @RequestMapping 修改 SpringMvcContract
 		}
 ```
 
-### [seal-kiss-spring-cloud-extension](seal-kiss-spring-cloud-extension) spring cloud 的能力延伸
-TODO 考虑将feign 挪到此包下
 #### loadbalancer 的扩展 [loadbalancer](seal-kiss-spring-cloud-extension%2Fsrc%2Fmain%2Fjava%2Fio%2Fgithub%2Fseal90%2Fkiss%2Fspring%2Fcloud%2Fextension%2Floadbalancer)
 [MultiMainZoneServiceInstanceListSupplier.java](seal-kiss-spring-cloud-extension%2Fsrc%2Fmain%2Fjava%2Fio%2Fgithub%2Fseal90%2Fkiss%2Fspring%2Fcloud%2Fextension%2Floadbalancer%2FMultiMainZoneServiceInstanceListSupplier.java)
 
 两个环境标识：主环境标识，用于区分多个不同主环境；子环境标识，用于本主环境下灰度服务选择。
 
-在注册服务时，两个标识默认都为空，需要配置 seal.kiss.env.main seal.kiss.env.subset 环境变量
+在注册服务时，两个标识默认都为空，需要配置 seal.kiss.env.main seal.kiss.env.subset 环境变量。
 
-在调用时，主环境标识，默认 DAILY； 子环境标识，默认无
+在调用时，主环境标识，默认 DAILY； 子环境标识，默认无。
 
-在服务调用时，选择同主环境，优先选择同灰度环境，再选择同主环境同名的子环境
+在服务调用时，选择同主环境，优先选择同灰度环境，再选择同主环境同名的子环境。
+
+配合 feign 使用时需要传递请求头配置 [MainZoneServiceInstanceListSupplierConfiguration.java](seal-kiss-spring-cloud-extension%2Fsrc%2Fmain%2Fjava%2Fio%2Fgithub%2Fseal90%2Fkiss%2Fspring%2Fcloud%2Fextension%2Floadbalancer%2FMainZoneServiceInstanceListSupplierConfiguration.java)
 
 #### 配置文件灰度
 优先使用灰度名称的，再选择使用服务名称的配置文件
@@ -228,4 +230,8 @@ transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 * AnnotatedElementUtils#findMergedAnnotation
 
 # TODO
-* 优化 Feign 注册代码
+* 多主环境灰度
+  * 消息灰度
+  * 缓存需要灰度吗？
+  * 存储需要灰度吗？
+  * 定时任务需要灰度吗？

@@ -1,7 +1,7 @@
 package com.github.seal90.kiss.multi.integration.config;
 
 import com.github.seal90.kiss.multi.client.helloWorld.HelloWorldClient;
-import io.github.seal90.kiss.feign.plugin.FeignConsumer;
+import io.github.seal90.kiss.spring.cloud.extension.feign.FeignConsumer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 

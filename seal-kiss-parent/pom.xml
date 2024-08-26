@@ -44,11 +44,6 @@
 			</dependency>
 			<dependency>
 				<groupId>io.github.seal90</groupId>
-				<artifactId>seal-kiss-feign-plugin</artifactId>
-				<version>${revision}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.github.seal90</groupId>
 				<artifactId>seal-kiss-spring-cloud-extension</artifactId>
 				<version>${revision}</version>
 			</dependency>
@@ -101,7 +96,6 @@
 	<modules>
 		<module>seal-kiss-base</module>
 		<module>seal-kiss-core</module>
-		<module>seal-kiss-feign-plugin</module>
 		<module>seal-kiss-mybatis-generator-plugin</module>
 		<module>seal-kiss-spring-cloud-extension</module>
 		<module>seal-kiss-spring-extension</module>
