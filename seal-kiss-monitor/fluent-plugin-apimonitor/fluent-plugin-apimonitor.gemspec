@@ -2,15 +2,15 @@
 $:.push File.expand_path('../lib', __FILE__)
 
 Gem::Specification.new do |gem|
-  gem.name        = "fluent-plugin-monitorexecutor"
-  gem.description = "monitorexecutor filter plugin for Fluentd monitor api"
-  gem.homepage    = "https://github.com/seal90/seal-kiss-spring-initializr/seal-kiss-monitor/fluent-plugin-monitorexecutor"
+  gem.name        = "fluent-plugin-apimonitor"
+  gem.description = "apimonitor filter plugin for Fluentd monitor api"
+  gem.homepage    = "https://github.com/seal90/seal-kiss-spring-initializr/seal-kiss-monitor/fluent-plugin-apimonitor"
   gem.summary     = gem.description
   gem.version     = File.read("VERSION").strip
   gem.authors     = ["seal"]
   gem.email       = "578935869@qq.com"
   #gem.platform    = Gem::Platform::RUBY
-  gem.files       = ['lib/fluent/plugin/filter_monitorexecutor.rb']
+  gem.files       = ['lib/fluent/plugin/filter_apimonitor.rb']
   # gem.test_files  = `ls . | grep test,spec,features`.split("\n")
   # gem.executables = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   gem.require_paths = ['lib']

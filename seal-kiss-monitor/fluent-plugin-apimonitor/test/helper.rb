@@ -22,7 +22,7 @@ unless ENV.has_key?('VERBOSE')
   $log = nulllogger
 end
 
-require 'fluent/plugin/filter_monitorexecutor'
+require 'fluent/plugin/filter_apimonitor'
 
 class Test::Unit::TestCase
 end

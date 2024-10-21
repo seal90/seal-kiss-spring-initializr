@@ -25,8 +25,8 @@
   </filter>
 
   <filter hello_api_aggregate_tag>
-    @type monitorexecutor
-    tag monitor_executor
+    @type apimonitor
+    tag api_monitor
     <rule>
       rule_id RULE_ID_1
       service_name seal-kiss-multi
